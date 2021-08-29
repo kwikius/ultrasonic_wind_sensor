@@ -19,11 +19,21 @@ namespace {
          }
       }   
    }
-   
+
+   void send_response(WiFiClient & client, String const & mime_type)
+   {
+      client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: " + mime_type);
+      client.println("Connection: close");
+      client.println();
+   }
+
 }
 
-void serve_page(WiFiClient & client,const char* text)
+void serve_page(WiFiClient & client,const char* mime_type, const char* text)
 {
+   send_response(client,mime_type);
+
    while(*text){
       String str;
       text = getline(text,str);

@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 
-void serve_page(WiFiClient & client,const char* text);
+void serve_page(WiFiClient & client,const char* mime_type,const char* text);
 
 const char* get_web_page_compass_js();
 
