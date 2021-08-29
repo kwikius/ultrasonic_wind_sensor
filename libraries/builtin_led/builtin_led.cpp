@@ -5,7 +5,7 @@ namespace {
 
   String builtinLedState = "off";
 
-  static uint8_t const builtin_led = 2;
+  static uint8_t const builtin_led = LED_BUILTIN;
   static uint8_t const builtin_led_on = LOW;
   static uint8_t const builtin_led_off = HIGH;
 
