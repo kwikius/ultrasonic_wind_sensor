@@ -2,11 +2,17 @@
 #include <stdlib.h>
 
 #if defined ESP8266
-#include <ESP8266WiFi.h>
-#include <ESP8266mDNS.h>   
+   #include <ESP8266WiFi.h>
+   #include <ESP8266mDNS.h>   
 #else
-#error need to define WiFi for this processor
+   #if defined ESP32
+      #include <WiFi.h>
+      #include <ESPmDNS.h>
+   #else
+      #error unknown processor
+   #endif
 #endif
+
 #include <WebSocketsServer.h> 
   
 #include <userin.h>
@@ -19,13 +25,54 @@
 
 namespace {
    uint16_t constexpr basePort = 80;
+
+   // N.B.  no spaces or underscores in hostname
+   constexpr char wifiHostName[] = "USWS-Server";
+   constexpr char mdns_local_name[] = "windsensor";
+
+   void webSocketEvent(byte /*num*/, WStype_t /*type*/, uint8_t * /*payload*/, size_t /*length*/)
+   {
+     // todo upload data to server
+   }
+
    WiFiServer server(basePort);
    WebSocketsServer webSocket = WebSocketsServer(basePort + 1);
-}
 
-void webSocketEvent(byte /*num*/, WStype_t /*type*/, uint8_t * /*payload*/, size_t /*length*/)
-{
-  // todo upload data to server
+   void WifiConnect()
+   {
+ 
+     WiFi.hostname(wifiHostName);
+
+     setup_network_params();
+
+     WiFi.begin(get_wifi_network_ssid(), get_wifi_password());
+     Serial.print("Connecting ...");
+     while (WiFi.status() != WL_CONNECTED) {
+       delay(250);
+       complement_builtin_led();
+       Serial.print(".");
+     }
+
+     turn_off_builtin_led();
+     Serial.println('\n');
+     Serial.print("Connected to : ");
+     Serial.println(WiFi.SSID());       
+     Serial.print("IP address   : ");
+     Serial.println(WiFi.localIP());         
+
+     if (!MDNS.begin(mdns_local_name)) { 
+       Serial.println("Error setting up MDNS responder!");
+     }
+     Serial.println("MDNS responder started");
+     MDNS.addService("http", "tcp", basePort); 
+     Serial.print("Web page available as ");
+     Serial.print(mdns_local_name);
+     Serial.println(".local\n");
+    
+     server.begin();
+     webSocket.begin();
+     webSocket.onEvent(webSocketEvent);
+   }
 }
 
 const char* get_compass_js();  
@@ -36,41 +83,8 @@ void setup()
 
   builtin_led_setup();
 
- // N.B.  no spaces or underscores in hostname
-  WiFi.hostname("USWS-Server");
-
-  setup_network_params();
-
-  WiFi.begin(get_wifi_network_ssid(), get_wifi_password());
-
-  Serial.print("Connecting ...");
+  WifiConnect();
   
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(250);
-    complement_builtin_led();
-    Serial.print(".");
-  }
-  turn_off_builtin_led();
-  Serial.println('\n');
-  Serial.print("Connected to ");
-  Serial.println(WiFi.SSID());       
-  Serial.print("IP address:\t");
-  Serial.println(WiFi.localIP());         
-  const char web_page_name[] = "windsensor";
-
-  if (!MDNS.begin(web_page_name)) { 
-    Serial.println("Error setting up MDNS responder!");
-  }
-  Serial.println("MDNS responder started");
-  MDNS.addService("http", "tcp", basePort); 
-  Serial.print("Web page available as ");
-  Serial.print(web_page_name);
-  Serial.println(".local\n");
- 
-  server.begin();
-
-  webSocket.begin();
-  webSocket.onEvent(webSocketEvent);
 }
 
 namespace{
@@ -193,8 +207,9 @@ namespace{
 
 void loop(){
 
+#if defined ESP8266
    MDNS.update();
-
+#endif
    parse_input();
 
    webSocket.loop();

@@ -2,7 +2,14 @@
 #define ARDUINO_ESP8266_WEB_PAGES_H_INCLUDED
 
 #include <Arduino.h>
-#include <ESP8266WiFi.h>
+
+#if defined ESP8266
+   #include <ESP8266WiFi.h>
+#else
+   #if defined ESP32
+      #include <WiFi.h>
+   #endif
+#endif
 
 void serve_page(WiFiClient & client, const char* mime_type, const char* text);
 
