@@ -1,9 +1,12 @@
 
-
 #include <stdlib.h>
+
+#if defined ESP8266
 #include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>   
 #include <ESP8266mDNS.h>   
+#else
+#error need to define WiFi for this processor
+#endif
 #include <WebSocketsServer.h> 
   
 #include <userin.h>
@@ -14,35 +17,35 @@
 #include <decode_packet.hpp>
 #include "windsensor_packet.hpp"
 
-WiFiServer server(80);
-WebSocketsServer webSocket = WebSocketsServer(81);
-void webSocketEvent(byte /*num*/, WStype_t /*type*/, uint8_t * /*payload*/, size_t /*length*/)
-{
-// todo upload data to server
+namespace {
+   uint16_t constexpr basePort = 80;
+   WiFiServer server(basePort);
+   WebSocketsServer webSocket = WebSocketsServer(basePort + 1);
 }
 
-ESP8266WiFiMulti wifiMulti;  
+void webSocketEvent(byte /*num*/, WStype_t /*type*/, uint8_t * /*payload*/, size_t /*length*/)
+{
+  // todo upload data to server
+}
 
 const char* get_compass_js();  
 
 void setup() 
 {
-
   Serial.begin(115200);
 
   builtin_led_setup();
- // no spaces or underscores
+
+ // N.B.  no spaces or underscores in hostname
   WiFi.hostname("USWS-Server");
 
-  check_do_setup();
+  setup_network_params();
 
-  while (! get_network_params() ) { ;}
-
-  wifiMulti.addAP(get_wifi_network_ssid(), get_wifi_password()); 
+  WiFi.begin(get_wifi_network_ssid(), get_wifi_password());
 
   Serial.print("Connecting ...");
   
-  while (wifiMulti.run() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(250);
     complement_builtin_led();
     Serial.print(".");
@@ -58,8 +61,8 @@ void setup()
   if (!MDNS.begin(web_page_name)) { 
     Serial.println("Error setting up MDNS responder!");
   }
-  Serial.println("mDNS responder started");
-  MDNS.addService("http", "tcp", 80); 
+  Serial.println("MDNS responder started");
+  MDNS.addService("http", "tcp", basePort); 
   Serial.print("Web page available as ");
   Serial.print(web_page_name);
   Serial.println(".local\n");
@@ -71,65 +74,6 @@ void setup()
 }
 
 namespace{
-
-   constexpr char main_page[] = 
-R"~(<!DOCTYPE html>
-<html>
-<head>
-<title>Ultrasonic wind sensor</title>
-<script src="compass.js" type="text/javascript"></script>
-</head>
-<body>
-<div id="windangle">0.0</div>
-<div id="windspeed">0.0</div>
-<canvas id="theCanvas" width="600" height="600" style="border:1px solid #000000;">
-Your browser does not support the HTML canvas tag.
-</canvas>
-<p>Received data = <span id="received_data">---</span> </p>
-</body>
-<script>
-var Socket;
-function onSocketRxEvent(event) 
-{
-   const wind_values = JSON.parse(event.data);
-   draw_wind(wind_values.windangle,wind_values.windspeed);
-   document.getElementById("received_data").innerHTML = event.data;
-   document.getElementById("windangle").innerHTML = wind_values.windangle;
-   document.getElementById("windspeed").innerHTML = wind_values.windspeed;
-}
-
-window.onload = function(e)
-{ 
-   Socket = new WebSocket("ws://" + window.location.hostname + ":81/");
-   Socket.onmessage = onSocketRxEvent;
-   draw_wind(0,0);
-}
-</script>
-</html>
-)~";
-
-   void serve_main_page(WiFiClient & client)
-   {
-      serve_page(client,main_page);
-   }
-
-   void send_response(WiFiClient & client, String const & mime_type)
-   {
-      client.println("HTTP/1.1 200 OK");
-      client.println("Content-Type: " + mime_type);
-      client.println("Connection: close");
-      client.println();
-   }
-
-   void send_html_response(WiFiClient & client)
-   {
-      send_response(client,"text/html");
-   }
-
-   void send_javascript_response(WiFiClient & client)
-   {
-      send_response(client,"text/javascript");
-   }
 
    void send_not_found_response(WiFiClient & client)
    {
@@ -146,14 +90,12 @@ window.onload = function(e)
    uri_service services[] = {
       { "/", 
         [] (WiFiClient & client) { 
-           send_html_response(client);
-           serve_main_page(client);
+           serve_page(client,"text/html",get_web_page_main_html());
          }
       },
       { "/compass.js", 
         [] (WiFiClient & client) { 
-           send_javascript_response(client);
-           serve_page(client,get_web_page_compass_js());
+           serve_page(client,"text/javascript",get_web_page_compass_js());
          }
       }
    };

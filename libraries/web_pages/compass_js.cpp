@@ -1,9 +1,9 @@
 
 
 #include "web_pages.h"
+namespace {
 
-//-----------------------------
-const char compass_js[] = R"(
+constexpr char compass_js[] = R"(
 function vect(x,y)
 {
    this.x = x;
@@ -71,6 +71,8 @@ function draw_wind(direction_deg, speed_knots)
    arrow(context,centre,knots_scale*speed_knots,direction_deg);
 }
 )";
+
+} // ~namespace
 
 const char* get_web_page_compass_js()
 {
