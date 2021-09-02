@@ -23,7 +23,20 @@
 #include <decode_packet.hpp>
 #include "windsensor_packet.hpp"
 
+#if defined ESP8266
+   HardwareSerial& debugSerial = Serial;
+   HardwareSerial& sensorSerial = Serial;
+#else
+   #if defined ESP32
+      HardwareSerial& debugSerial = Serial;
+      HardwareSerial& sensorSerial = Serial2;
+   #else
+      #error need to define serial ports 
+   #endif
+#endif
+
 namespace {
+
    uint16_t constexpr basePort = 80;
 
    // N.B.  no spaces or underscores in hostname
@@ -46,28 +59,28 @@ namespace {
      setup_network_params();
 
      WiFi.begin(get_wifi_network_ssid(), get_wifi_password());
-     Serial.print("Connecting ...");
+     debugSerial.print("Connecting ...");
      while (WiFi.status() != WL_CONNECTED) {
        delay(250);
        complement_builtin_led();
-       Serial.print(".");
+       debugSerial.print(".");
      }
 
      turn_off_builtin_led();
-     Serial.println('\n');
-     Serial.print("Connected to : ");
-     Serial.println(WiFi.SSID());       
-     Serial.print("IP address   : ");
-     Serial.println(WiFi.localIP());         
+     debugSerial.println('\n');
+     debugSerial.print("Connected to : ");
+     debugSerial.println(WiFi.SSID());       
+     debugSerial.print("IP address   : ");
+     debugSerial.println(WiFi.localIP());         
 
      if (!MDNS.begin(mdns_local_name)) { 
-       Serial.println("Error setting up MDNS responder!");
+        debugSerial.println("Error setting up MDNS responder!");
      }
-     Serial.println("MDNS responder started");
+     debugSerial.println("MDNS responder started");
      MDNS.addService("http", "tcp", basePort); 
-     Serial.print("Web page available as ");
-     Serial.print(mdns_local_name);
-     Serial.println(".local\n");
+     debugSerial.print("Web page available as ");
+     debugSerial.print(mdns_local_name);
+     debugSerial.println(".local\n");
     
      server.begin();
      webSocket.begin();
@@ -75,16 +88,16 @@ namespace {
    }
 }
 
-const char* get_compass_js();  
-
 void setup() 
 {
-  Serial.begin(115200);
+   debugSerial.begin(115200);
+   // debugSerial and sensorSerial may be 2 separate ports
+   if ( &debugSerial != &sensorSerial){
+      sensorSerial.begin(115200);
+   }
+   builtin_led_setup();
 
-  builtin_led_setup();
-
-  WifiConnect();
-  
+   WifiConnect();
 }
 
 namespace{
@@ -128,13 +141,13 @@ namespace{
    void processGET(WiFiClient & client)
    {
       if (client) {                             
-         Serial.println("New Client.");            
+         debugSerial.println("New Client.");            
          String request;          
          bool newline = false;
          while (client.connected()) {           
             if (client.available()) {             
                char const c = client.read();             
-               Serial.write(c);                    
+               debugSerial.write(c);                    
                request += c;
                String filename;
                switch (c){
@@ -153,8 +166,8 @@ namespace{
                            }
                         }
                         if (!serviced){
-                           Serial.print(filename);
-                           Serial.println(" not found\n");
+                           debugSerial.print(filename);
+                           debugSerial.println(" not found\n");
                            send_not_found_response(client);
                         }
                         client.println();
@@ -169,8 +182,8 @@ namespace{
                } //~switch
             }// ~if
          }//~while
-         Serial.println("Client disconnected.");
-         Serial.println("");
+         debugSerial.println("Client disconnected.");
+         debugSerial.println("");
       }//~if
    }
 
@@ -180,8 +193,8 @@ namespace{
 
    void parse_input()
    {
-      while(Serial.available() ){ 
-         uint8_t const ch = Serial.read();
+      while(sensorSerial.available() ){ 
+         uint8_t const ch = sensorSerial.read();
          uint16_t const packet_length = parser.parse(ch);
          if ( packet_length > 0U ){
             uint8_t const * decoded_packet_buffer = parser.get_decoded_packet();
@@ -197,7 +210,7 @@ namespace{
                      }
                   )
                ) {
-                  Serial.println("parse packet failed");
+                  debugSerial.println("parse packet failed");
                }
             }
          }

@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include <EEPROM.h>
 #include <builtin_led.h>
+#include "userin.h"
 
 namespace {
   
@@ -17,14 +18,12 @@ namespace {
 const char* get_wifi_network_ssid() { return ssid;}
 const char* get_wifi_password()  { return password;}
 
- //  void flush_serial_input_buffer()
-
 namespace {
 
    void flush_serial_input_buffer()
    {
-     while (Serial.available()){
-        int ch = Serial.read();
+     while (debugSerial.available()){
+        int ch = debugSerial.read();
         (void)ch;
      }
    }
@@ -41,8 +40,8 @@ namespace {
        size_t idx = 0;
        while(idx < buf_len){
 
-         if (Serial.available() > 0){
-             int ch =Serial.read();
+         if (debugSerial.available() > 0){
+             int ch =debugSerial.read();
               if ( ch == '\r'){
                  buf[idx] = '\0';
                  return idx ;
@@ -53,7 +52,7 @@ namespace {
            
          }
        }
-       Serial.println("user input too long\n");
+       debugSerial.println("user input too long\n");
        return 0;
    }
 
@@ -78,13 +77,13 @@ namespace {
                   ok = true;
                   break;
                }else{
-                 Serial.println("invalid SSID in eeprom : STOP"); for(;;){;}
+                 debugSerial.println("invalid SSID in eeprom : STOP"); for(;;){;}
                }
            }else{
              ssid[i] = ch;
            }
          }
-         if (ok == false){Serial.println("SSID too long in eeprom : STOP"); for(;;){;} }
+         if (ok == false){debugSerial.println("SSID too long in eeprom : STOP"); for(;;){;} }
          
          start = eeprom_magic_size + max_ssid;
          ok = false;
@@ -96,13 +95,13 @@ namespace {
                   ok = true; 
                   break;
                }else{
-                 Serial.println("invalid Pswd in eeprom : STOP"); for(;;){;}
+                 debugSerial.println("invalid Pswd in eeprom : STOP"); for(;;){;}
                }
            }else{
              password[i] = ch;
            }
          }
-         if (ok == false){Serial.println("bad info in eeprom : STOP"); for(;;){;} }
+         if (ok == false){debugSerial.println("bad info in eeprom : STOP"); for(;;){;} }
          //N.B. Dont use EEPROM.end() when reading
          // as it will cause a write to flash
          return true;
@@ -129,7 +128,6 @@ namespace {
        //###################################
        //N.B. Must call end to write the data to flash
        // prior it is only held in a ram cache
-
        EEPROM.end();
        //######################################
        return true;
@@ -138,30 +136,30 @@ namespace {
    bool get_manual_network_params()
    {
          for (;;){
-          Serial.print("Enter ssid: ");
+          debugSerial.print("Enter ssid: ");
           int ret = get_user_string(ssid,max_ssid);
           if (ret < 0){
-            Serial.print("Error from get ssid : STOP!\n"); for(;;){;}
+            debugSerial.print("Error from get ssid : STOP!\n"); for(;;){;}
           }
           if ( ret > 0) {
-            Serial.println(ssid);
+            debugSerial.println(ssid);
             break;
           }else {
-              Serial.println("");
+              debugSerial.println("");
           }
          }
      
          for (;;){
-          Serial.print("Enter passwd: ");
+          debugSerial.print("Enter passwd: ");
           int ret = get_user_string(password,max_password);
           if (ret < 0){
-            Serial.print("Error from get password : STOP!\n"); for(;;){;}
+            debugSerial.print("Error from get password : STOP!\n"); for(;;){;}
           }
           if ( ret > 0) {
-            Serial.println("password");
+            debugSerial.println("password");
             break;
           } else {
-              Serial.println("");
+              debugSerial.println("");
           }
          }
        return true;
@@ -171,14 +169,14 @@ namespace {
    {
        while (! get_manual_network_params()) {;}
        flush_serial_input_buffer();
-       Serial.println("Save Settings(y\\n)? ");
-       while (! Serial.available()){;}
-       char ch = Serial.read();
+       debugSerial.println("Save Settings(y\\n)? ");
+       while (! debugSerial.available()){;}
+       char ch = debugSerial.read();
        if (( ch == 'y' ) || (ch == 'Y')){
-          Serial.println("y");
+          debugSerial.println("y");
           return write_eeprom_network_params();
        }else {
-          Serial.println("n");
+          debugSerial.println("n");
           return true;
        }
    }
@@ -186,7 +184,7 @@ namespace {
    bool get_network_params()
    {
      if ( ! get_eeprom_network_params()){
-         Serial.println("No settings found, Please enter manually");
+         debugSerial.println("No settings found, Please enter manually");
          return do_setup();
      }
      return true;
@@ -202,9 +200,9 @@ void setup_network_params()
   auto last_led_switch = now;
   //delay here so that user can change network ssid and passwd if wants
   flush_serial_input_buffer();
-  Serial.println("Press ret x 3 for setup");
+  debugSerial.println("Press ret x 3 for setup");
   while ( (millis() - now) < 5000){
-    if ( Serial.available() && ( Serial.read() == '\r' ) ){
+    if ( debugSerial.available() && ( debugSerial.read() == '\r' ) ){
        if (++rets > 2){
           if(do_setup()){
              return;

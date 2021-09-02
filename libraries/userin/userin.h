@@ -20,4 +20,13 @@ const char* get_wifi_network_ssid();
 **/
 const char* get_wifi_password();
 
+// N.B These may or may not refer to the same serial port hardware
+
+// serial port for debug data TX only for ESP8266 anyway;
+extern  HardwareSerial& debugSerial;
+   // serial port for sensor data, RX only for ESP8266 anyway;
+// For ESP8266 for user to enter network params, then port hardware will need to be switched
+// TODO switch to different pins for user netwirk params entry
+extern  HardwareSerial& sensorSerial;
+
 #endif

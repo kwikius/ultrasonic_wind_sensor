@@ -5,7 +5,7 @@
 #include <quan/stm32/tim.hpp>
 
 typedef quan::mcu::pin<quan::stm32::gpioa,2> txo_pin;// (A7)
-typedef quan::mcu::pin<quan::stm32::gpioa,15> rxi_pin;
+typedef quan::mcu::pin<quan::stm32::gpioa,15> rxi_pin; //PA15 not broken out on Nucleo-L432 N.B not used ATM
 
 typedef quan::mcu::pin<quan::stm32::gpiob,0> analog_in;
 typedef quan::mcu::pin<quan::stm32::gpiob,3> led;
