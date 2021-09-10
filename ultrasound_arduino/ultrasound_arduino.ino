@@ -95,7 +95,7 @@ void disableTIM1()
 **/
 void enableTIM1()
 {
-   TCCR1B |= 1U ;
+   TCCR1B |= (1 << CS12) ; // div 256
 }
 
 /*
@@ -135,8 +135,8 @@ void excitePulseSetup()
          //disable irqs except for OC1B match  or overflow?
          // clear irq flags by writing their bits in TIFR1
          TIFR1 = 0b00100111;
-        // // enable only irq on OCR1B compare in TIMER1_COMPB_vect
-         TIMSK1 |= (0b1 << OCIE1B);
+   
+         TIMSK1 |= (0b1 << OCIE1B) | (0b1 << TOIE1);
 
        enableTIM1();
    }
@@ -147,26 +147,16 @@ void excitePulseSetup()
 
 }
 
-#if 0
+
 ISR (TIMER1_OVF_vect)
 {
-  ++led_count;
-  if ( led_count > 244){
-     complement_builtin_led();
-     led_count = 0;
-  }
-}
-#else
-ISR (TIMER1_COMPB_vect)
-{
-  ++led_count;
-  if ( led_count > 244){
-     complement_builtin_led();
-     led_count = 0;
-  }
+   turn_on_builtin_led();
 }
 
-#endif
+ISR (TIMER1_COMPB_vect)
+{
+   turn_off_builtin_led();
+}
 
 void setup()
 {
