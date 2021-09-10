@@ -7,6 +7,6 @@ void builtin_led_setup();
 void complement_builtin_led();
 void turn_on_builtin_led();
 void turn_off_builtin_led();
-String get_builtin_led_state();
+bool get_builtin_led_state();
 
 #endif // BUILIN_LED_H_INCLUDED

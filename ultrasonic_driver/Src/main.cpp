@@ -154,7 +154,7 @@ namespace
 
          output("NS = ",filtered_results[0]);
          output("SN = ",filtered_results[1]);
-         output("NE diff = ",filtered_results[0]- filtered_results[1]);
+         output("NS diff = ",filtered_results[0]- filtered_results[1]);
          output("EW = ",filtered_results[2]);
          output("WE = ",filtered_results[3]);
          output("EW diff = ",filtered_results[2]- filtered_results[3]);
@@ -294,6 +294,7 @@ int main(void)
   
   setup_ultrasonic_pulse_stream();
 
+ // raw_timing_output();
   wind_velocity_output();
   //filtered_raw_timing_output(0.1);
 }

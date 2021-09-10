@@ -3,28 +3,29 @@
 
 namespace {
 
-  String builtinLedState = "off";
+  bool builtinLedState = false;
 
   static uint8_t const builtin_led = LED_BUILTIN;
-  static uint8_t const builtin_led_on = LOW;
-  static uint8_t const builtin_led_off = HIGH;
+
+  static uint8_t const builtin_led_on = HIGH;
+  static uint8_t const builtin_led_off = LOW;
 
 }
 
-String get_builtin_led_state()
+bool get_builtin_led_state()
 {
   return  builtinLedState;
 }
 
 void turn_on_builtin_led()
 {
-   builtinLedState= "on";
+   builtinLedState= true;
    digitalWrite(builtin_led,builtin_led_on);
 }
 
 void turn_off_builtin_led()
 {
-   builtinLedState= "off";
+   builtinLedState= false;
    digitalWrite(builtin_led,builtin_led_off);
 }
 
@@ -36,7 +37,7 @@ void builtin_led_setup()
 
 void complement_builtin_led()
 {
-   if ( builtinLedState == "off"){
+   if ( builtinLedState == false){
      turn_on_builtin_led();
    }else{
       turn_off_builtin_led();

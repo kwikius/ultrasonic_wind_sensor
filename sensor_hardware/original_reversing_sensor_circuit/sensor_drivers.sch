@@ -1,0 +1,748 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:switches
+LIBS:relays
+LIBS:motors
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:reversing_sensor_circuit-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 3
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L R R1
+U 1 1 607248ED
+P 7825 1300
+F 0 "R1" V 7905 1300 50  0000 C CNN
+F 1 "330R" V 7825 1300 50  0000 C CNN
+F 2 "" V 7755 1300 50  0001 C CNN
+F 3 "" H 7825 1300 50  0001 C CNN
+	1    7825 1300
+	0    -1   1    0   
+$EndComp
+$Comp
+L C C2
+U 1 1 607248F4
+P 8175 1650
+F 0 "C2" H 8200 1750 50  0000 L CNN
+F 1 "470uF" H 8200 1550 50  0000 L CNN
+F 2 "" H 8213 1500 50  0001 C CNN
+F 3 "" H 8175 1650 50  0001 C CNN
+	1    8175 1650
+	-1   0    0    -1  
+$EndComp
+$Comp
+L C C1
+U 1 1 607248FB
+P 7500 1575
+F 0 "C1" H 7525 1675 50  0000 L CNN
+F 1 "220uF" H 7525 1475 50  0000 L CNN
+F 2 "" H 7538 1425 50  0001 C CNN
+F 3 "" H 7500 1575 50  0001 C CNN
+	1    7500 1575
+	-1   0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 60724902
+P 8175 1900
+F 0 "#PWR?" H 8175 1650 50  0001 C CNN
+F 1 "GND" H 8175 1750 50  0000 C CNN
+F 2 "" H 8175 1900 50  0001 C CNN
+F 3 "" H 8175 1900 50  0001 C CNN
+	1    8175 1900
+	-1   0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 60724908
+P 7500 1875
+F 0 "#PWR?" H 7500 1625 50  0001 C CNN
+F 1 "GND" H 7500 1725 50  0000 C CNN
+F 2 "" H 7500 1875 50  0001 C CNN
+F 3 "" H 7500 1875 50  0001 C CNN
+	1    7500 1875
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	7675 1300 7250 1300
+Wire Wire Line
+	7500 1300 7500 1425
+Wire Wire Line
+	8350 1300 7975 1300
+Wire Wire Line
+	8175 1300 8175 1500
+Wire Wire Line
+	8175 1900 8175 1800
+Wire Wire Line
+	7500 1875 7500 1725
+$Comp
+L +12V #PWR?
+U 1 1 60724956
+P 9150 1225
+F 0 "#PWR?" H 9150 1075 50  0001 C CNN
+F 1 "+12V" H 9150 1365 50  0000 C CNN
+F 2 "" H 9150 1225 50  0001 C CNN
+F 3 "" H 9150 1225 50  0001 C CNN
+	1    9150 1225
+	-1   0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 607251DC
+P 3750 1600
+F 0 "#PWR?" H 3750 1350 50  0001 C CNN
+F 1 "GND" H 3750 1450 50  0000 C CNN
+F 2 "" H 3750 1600 50  0001 C CNN
+F 3 "" H 3750 1600 50  0001 C CNN
+	1    3750 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Speaker_Ultrasound LS?
+U 1 1 607251E2
+P 4250 1100
+F 0 "LS?" H 4275 1325 50  0000 R CNN
+F 1 "Speaker_Ultrasound" H 4275 1250 50  0001 R CNN
+F 2 "" H 4215 1050 50  0001 C CNN
+F 3 "" H 4215 1050 50  0001 C CNN
+	1    4250 1100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3625 1500 4000 1500
+Wire Wire Line
+	3750 1500 3750 1600
+Wire Wire Line
+	3625 1100 4050 1100
+Wire Wire Line
+	4000 1500 4000 1200
+Wire Wire Line
+	4000 1200 4050 1200
+Connection ~ 3750 1500
+$Comp
+L R R4
+U 1 1 607251F5
+P 3850 1300
+F 0 "R4" V 3930 1300 50  0000 C CNN
+F 1 "33K" V 3850 1300 50  0000 C CNN
+F 2 "" V 3780 1300 50  0001 C CNN
+F 3 "" H 3850 1300 50  0001 C CNN
+	1    3850 1300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3850 1450 3850 1500
+Connection ~ 3850 1500
+Wire Wire Line
+	3850 1150 3850 1100
+Connection ~ 3850 1100
+Wire Wire Line
+	2825 1500 2775 1500
+Wire Wire Line
+	2775 1500 2775 1550
+$Comp
+L GND #PWR?
+U 1 1 60725207
+P 2775 1975
+F 0 "#PWR?" H 2775 1725 50  0001 C CNN
+F 1 "GND" H 2775 1825 50  0000 C CNN
+F 2 "" H 2775 1975 50  0001 C CNN
+F 3 "" H 2775 1975 50  0001 C CNN
+	1    2775 1975
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2375 1750 2475 1750
+Wire Wire Line
+	2825 1100 2775 1100
+Connection ~ 7500 1300
+$Comp
+L D D1
+U 1 1 607257C0
+P 8925 1300
+F 0 "D1" H 8925 1400 50  0000 C CNN
+F 1 "D" H 8925 1200 50  0000 C CNN
+F 2 "" H 8925 1300 50  0001 C CNN
+F 3 "" H 8925 1300 50  0001 C CNN
+	1    8925 1300
+	1    0    0    1   
+$EndComp
+$Comp
+L R R2
+U 1 1 60725829
+P 8500 1300
+F 0 "R2" V 8580 1300 50  0000 C CNN
+F 1 "2R" V 8500 1300 50  0000 C CNN
+F 2 "" V 8430 1300 50  0001 C CNN
+F 3 "" H 8500 1300 50  0001 C CNN
+	1    8500 1300
+	0    -1   1    0   
+$EndComp
+Connection ~ 8175 1300
+Wire Wire Line
+	8650 1300 8775 1300
+Wire Wire Line
+	9075 1300 9150 1300
+Wire Wire Line
+	9150 1300 9150 1225
+Text Label 7250 1300 2    60   ~ 0
+TransformerSupply
+Text Label 2775 1100 2    60   ~ 0
+TransformerSupply
+Wire Wire Line
+	3700 850  3700 1100
+Connection ~ 3700 1100
+$Comp
+L R R5
+U 1 1 60728980
+P 3325 850
+F 0 "R5" V 3405 850 50  0000 C CNN
+F 1 "4K7" V 3325 850 50  0000 C CNN
+F 2 "" V 3255 850 50  0001 C CNN
+F 3 "" H 3325 850 50  0001 C CNN
+	1    3325 850 
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3700 850  3475 850 
+Wire Wire Line
+	3175 850  2950 850 
+$Comp
+L Q_NPN_BEC Q1
+U 1 1 60733E19
+P 2675 1750
+F 0 "Q1" H 2875 1800 50  0000 L CNN
+F 1 "S8050-J3Y" H 2875 1700 50  0000 L CNN
+F 2 "" H 2875 1850 50  0001 C CNN
+F 3 "" H 2675 1750 50  0001 C CNN
+	1    2675 1750
+	1    0    0    -1  
+$EndComp
+Text Notes 4475 950  0    60   ~ 0
+D
+Wire Wire Line
+	2775 1975 2775 1950
+$Comp
+L GND #PWR?
+U 1 1 6073CE71
+P 3475 3275
+F 0 "#PWR?" H 3475 3025 50  0001 C CNN
+F 1 "GND" H 3475 3125 50  0000 C CNN
+F 2 "" H 3475 3275 50  0001 C CNN
+F 3 "" H 3475 3275 50  0001 C CNN
+	1    3475 3275
+	1    0    0    -1  
+$EndComp
+$Comp
+L Speaker_Ultrasound LS?
+U 1 1 6073CE77
+P 3975 2775
+F 0 "LS?" H 4000 3000 50  0000 R CNN
+F 1 "Speaker_Ultrasound" H 4000 2925 50  0001 R CNN
+F 2 "" H 3940 2725 50  0001 C CNN
+F 3 "" H 3940 2725 50  0001 C CNN
+	1    3975 2775
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 3175 3725 3175
+Wire Wire Line
+	3475 3175 3475 3275
+Wire Wire Line
+	3350 2775 3775 2775
+Wire Wire Line
+	3725 3175 3725 2875
+Wire Wire Line
+	3725 2875 3775 2875
+Connection ~ 3475 3175
+$Comp
+L R R6
+U 1 1 6073CE8B
+P 3575 2975
+F 0 "R6" V 3655 2975 50  0000 C CNN
+F 1 "33K" V 3575 2975 50  0000 C CNN
+F 2 "" V 3505 2975 50  0001 C CNN
+F 3 "" H 3575 2975 50  0001 C CNN
+	1    3575 2975
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3575 3125 3575 3175
+Connection ~ 3575 3175
+Wire Wire Line
+	3575 2825 3575 2775
+Connection ~ 3575 2775
+Wire Wire Line
+	2550 3175 2500 3175
+Wire Wire Line
+	2500 3175 2500 3225
+$Comp
+L GND #PWR?
+U 1 1 6073CE97
+P 2500 3650
+F 0 "#PWR?" H 2500 3400 50  0001 C CNN
+F 1 "GND" H 2500 3500 50  0000 C CNN
+F 2 "" H 2500 3650 50  0001 C CNN
+F 3 "" H 2500 3650 50  0001 C CNN
+	1    2500 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2100 3425 2200 3425
+Wire Wire Line
+	2550 2775 2500 2775
+Text Label 2500 2775 2    60   ~ 0
+TransformerSupply
+Wire Wire Line
+	3425 2525 3425 2775
+Connection ~ 3425 2775
+$Comp
+L R R7
+U 1 1 6073CEA4
+P 3050 2525
+F 0 "R7" V 3130 2525 50  0000 C CNN
+F 1 "4K7" V 3050 2525 50  0000 C CNN
+F 2 "" V 2980 2525 50  0001 C CNN
+F 3 "" H 3050 2525 50  0001 C CNN
+	1    3050 2525
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3425 2525 3200 2525
+Wire Wire Line
+	2900 2525 2675 2525
+$Comp
+L Q_NPN_BEC Q2
+U 1 1 6073CEAC
+P 2400 3425
+F 0 "Q2" H 2600 3475 50  0000 L CNN
+F 1 "S8050-J3Y" H 2600 3375 50  0000 L CNN
+F 2 "" H 2600 3525 50  0001 C CNN
+F 3 "" H 2400 3425 50  0001 C CNN
+	1    2400 3425
+	1    0    0    -1  
+$EndComp
+Text Notes 4200 2625 0    60   ~ 0
+C
+Wire Wire Line
+	2500 3650 2500 3625
+$Comp
+L GND #PWR?
+U 1 1 6073CFB9
+P 3225 4925
+F 0 "#PWR?" H 3225 4675 50  0001 C CNN
+F 1 "GND" H 3225 4775 50  0000 C CNN
+F 2 "" H 3225 4925 50  0001 C CNN
+F 3 "" H 3225 4925 50  0001 C CNN
+	1    3225 4925
+	1    0    0    -1  
+$EndComp
+$Comp
+L Speaker_Ultrasound LS?
+U 1 1 6073CFBF
+P 3725 4425
+F 0 "LS?" H 3750 4650 50  0000 R CNN
+F 1 "Speaker_Ultrasound" H 3750 4575 50  0001 R CNN
+F 2 "" H 3690 4375 50  0001 C CNN
+F 3 "" H 3690 4375 50  0001 C CNN
+	1    3725 4425
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3100 4825 3475 4825
+Wire Wire Line
+	3225 4825 3225 4925
+Wire Wire Line
+	3100 4425 3525 4425
+Wire Wire Line
+	3475 4825 3475 4525
+Wire Wire Line
+	3475 4525 3525 4525
+Connection ~ 3225 4825
+$Comp
+L R R8
+U 1 1 6073CFD3
+P 3325 4625
+F 0 "R8" V 3405 4625 50  0000 C CNN
+F 1 "33K" V 3325 4625 50  0000 C CNN
+F 2 "" V 3255 4625 50  0001 C CNN
+F 3 "" H 3325 4625 50  0001 C CNN
+	1    3325 4625
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3325 4775 3325 4825
+Connection ~ 3325 4825
+Wire Wire Line
+	3325 4475 3325 4425
+Connection ~ 3325 4425
+Wire Wire Line
+	2300 4825 2250 4825
+Wire Wire Line
+	2250 4825 2250 4875
+$Comp
+L GND #PWR?
+U 1 1 6073CFDF
+P 2250 5300
+F 0 "#PWR?" H 2250 5050 50  0001 C CNN
+F 1 "GND" H 2250 5150 50  0000 C CNN
+F 2 "" H 2250 5300 50  0001 C CNN
+F 3 "" H 2250 5300 50  0001 C CNN
+	1    2250 5300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1850 5075 1950 5075
+Wire Wire Line
+	2300 4425 2250 4425
+Text Label 2250 4425 2    60   ~ 0
+TransformerSupply
+Wire Wire Line
+	3175 4175 3175 4425
+Connection ~ 3175 4425
+$Comp
+L R R9
+U 1 1 6073CFEC
+P 2800 4175
+F 0 "R9" V 2880 4175 50  0000 C CNN
+F 1 "4K7" V 2800 4175 50  0000 C CNN
+F 2 "" V 2730 4175 50  0001 C CNN
+F 3 "" H 2800 4175 50  0001 C CNN
+	1    2800 4175
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3175 4175 2950 4175
+Wire Wire Line
+	2650 4175 2425 4175
+$Comp
+L Q_NPN_BEC Q3
+U 1 1 6073CFF4
+P 2150 5075
+F 0 "Q3" H 2350 5125 50  0000 L CNN
+F 1 "S8050-J3Y" H 2350 5025 50  0000 L CNN
+F 2 "" H 2350 5175 50  0001 C CNN
+F 3 "" H 2150 5075 50  0001 C CNN
+	1    2150 5075
+	1    0    0    -1  
+$EndComp
+Text Notes 3950 4275 0    60   ~ 0
+B
+Wire Wire Line
+	2250 5300 2250 5275
+$Comp
+L GND #PWR?
+U 1 1 6073D11B
+P 3300 6550
+F 0 "#PWR?" H 3300 6300 50  0001 C CNN
+F 1 "GND" H 3300 6400 50  0000 C CNN
+F 2 "" H 3300 6550 50  0001 C CNN
+F 3 "" H 3300 6550 50  0001 C CNN
+	1    3300 6550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Speaker_Ultrasound LS?
+U 1 1 6073D121
+P 3800 6050
+F 0 "LS?" H 3825 6275 50  0000 R CNN
+F 1 "Speaker_Ultrasound" H 3825 6200 50  0001 R CNN
+F 2 "" H 3765 6000 50  0001 C CNN
+F 3 "" H 3765 6000 50  0001 C CNN
+	1    3800 6050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3175 6450 3550 6450
+Wire Wire Line
+	3300 6450 3300 6550
+Wire Wire Line
+	3175 6050 3600 6050
+Wire Wire Line
+	3550 6450 3550 6150
+Wire Wire Line
+	3550 6150 3600 6150
+Connection ~ 3300 6450
+$Comp
+L R R10
+U 1 1 6073D135
+P 3400 6250
+F 0 "R10" V 3480 6250 50  0000 C CNN
+F 1 "33K" V 3400 6250 50  0000 C CNN
+F 2 "" V 3330 6250 50  0001 C CNN
+F 3 "" H 3400 6250 50  0001 C CNN
+	1    3400 6250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3400 6400 3400 6450
+Connection ~ 3400 6450
+Wire Wire Line
+	3400 6100 3400 6050
+Connection ~ 3400 6050
+Wire Wire Line
+	2375 6450 2325 6450
+Wire Wire Line
+	2325 6450 2325 6500
+$Comp
+L GND #PWR?
+U 1 1 6073D141
+P 2325 6925
+F 0 "#PWR?" H 2325 6675 50  0001 C CNN
+F 1 "GND" H 2325 6775 50  0000 C CNN
+F 2 "" H 2325 6925 50  0001 C CNN
+F 3 "" H 2325 6925 50  0001 C CNN
+	1    2325 6925
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1925 6700 2025 6700
+Wire Wire Line
+	2375 6050 2325 6050
+Text Label 2325 6050 2    60   ~ 0
+TransformerSupply
+Wire Wire Line
+	3250 5800 3250 6050
+Connection ~ 3250 6050
+$Comp
+L R R11
+U 1 1 6073D14E
+P 2875 5800
+F 0 "R11" V 2955 5800 50  0000 C CNN
+F 1 "4K7" V 2875 5800 50  0000 C CNN
+F 2 "" V 2805 5800 50  0001 C CNN
+F 3 "" H 2875 5800 50  0001 C CNN
+	1    2875 5800
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	3250 5800 3025 5800
+Wire Wire Line
+	2725 5800 2500 5800
+$Comp
+L Q_NPN_BEC Q4
+U 1 1 6073D156
+P 2225 6700
+F 0 "Q4" H 2425 6750 50  0000 L CNN
+F 1 "S8050-J3Y" H 2425 6650 50  0000 L CNN
+F 2 "" H 2425 6800 50  0001 C CNN
+F 3 "" H 2225 6700 50  0001 C CNN
+	1    2225 6700
+	1    0    0    -1  
+$EndComp
+Text Notes 4025 5900 0    60   ~ 0
+A
+Wire Wire Line
+	2325 6925 2325 6900
+$Comp
+L 4052 U3
+U 1 1 6073F95B
+P 7350 3825
+F 0 "U3" H 7450 3825 50  0000 C CNN
+F 1 "4052" H 7450 3625 50  0000 C CNN
+F 2 "" H 7350 3825 60  0001 C CNN
+F 3 "" H 7350 3825 60  0001 C CNN
+	1    7350 3825
+	1    0    0    -1  
+$EndComp
+Text Label 25   2775 0    60   ~ 0
+SENS_OUT
+Text Label 2950 850  2    60   ~ 0
+X2
+Text Label 2375 1750 2    60   ~ 0
+Y2
+Text Label 2675 2525 2    60   ~ 0
+X1
+Text Label 2100 3425 2    60   ~ 0
+Y1
+Text Label 2425 4175 2    60   ~ 0
+X0
+Text Label 1850 5075 2    60   ~ 0
+Y0
+Text Label 2500 5800 2    60   ~ 0
+X3
+Text Label 1925 6700 2    60   ~ 0
+Y3
+Text Label 6550 3225 2    60   ~ 0
+X0
+Text Label 6550 3325 2    60   ~ 0
+X1
+Text Label 6550 3425 2    60   ~ 0
+X2
+Text Label 6550 3525 2    60   ~ 0
+X3
+Text Label 6550 3625 2    60   ~ 0
+Y0
+Text Label 6550 3725 2    60   ~ 0
+Y1
+Text Label 6550 3825 2    60   ~ 0
+Y2
+Text Label 6550 3925 2    60   ~ 0
+Y3
+Wire Wire Line
+	6650 3225 6550 3225
+Wire Wire Line
+	6650 3325 6550 3325
+Wire Wire Line
+	6650 3425 6550 3425
+Wire Wire Line
+	6650 3525 6550 3525
+Wire Wire Line
+	6650 3625 6550 3625
+Wire Wire Line
+	6650 3725 6550 3725
+Wire Wire Line
+	6650 3825 6550 3825
+Wire Wire Line
+	6650 3925 6550 3925
+Text HLabel 8275 3625 2    60   Input ~ 0
+SenseDrive
+Text HLabel 8225 3225 2    60   Output ~ 0
+RawSense
+Wire Wire Line
+	8225 3225 8050 3225
+Wire Wire Line
+	8275 3625 8050 3625
+$Comp
+L GND #PWR?
+U 1 1 6074215A
+P 7800 4925
+F 0 "#PWR?" H 7800 4675 50  0001 C CNN
+F 1 "GND" H 7800 4775 50  0000 C CNN
+F 2 "" H 7800 4925 50  0001 C CNN
+F 3 "" H 7800 4925 50  0001 C CNN
+	1    7800 4925
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8050 4325 8125 4325
+Wire Wire Line
+	8125 4325 8125 4800
+Wire Wire Line
+	8125 4800 6475 4800
+Wire Wire Line
+	7800 4800 7800 4925
+Wire Wire Line
+	6650 4125 6475 4125
+Wire Wire Line
+	6475 4125 6475 4800
+Connection ~ 7800 4800
+Text HLabel 6125 4325 0    60   Input ~ 0
+Address0
+Text HLabel 6125 4425 0    60   Input ~ 0
+Address1
+Wire Wire Line
+	6650 4325 6125 4325
+Wire Wire Line
+	6650 4425 6125 4425
+$Comp
+L VDD #PWR?
+U 1 1 6073B906
+P 6575 2725
+F 0 "#PWR?" H 6575 2575 50  0001 C CNN
+F 1 "VDD" H 6575 2875 50  0000 C CNN
+F 2 "" H 6575 2725 50  0001 C CNN
+F 3 "" H 6575 2725 50  0001 C CNN
+	1    6575 2725
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR?
+U 1 1 6073B9B6
+P 6800 2725
+F 0 "#PWR?" H 6800 2575 50  0001 C CNN
+F 1 "+5V" H 6800 2865 50  0000 C CNN
+F 2 "" H 6800 2725 50  0001 C CNN
+F 3 "" H 6800 2725 50  0001 C CNN
+	1    6800 2725
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6575 2725 6575 2800
+Wire Wire Line
+	6575 2800 6800 2800
+Wire Wire Line
+	6800 2800 6800 2725
+$Comp
+L Transformer_1P_1S T?
+U 1 1 61362743
+P 3225 1300
+F 0 "T?" H 3225 1550 50  0000 C CNN
+F 1 "Transformer_1P_1S" H 3225 1000 50  0000 C CNN
+F 2 "" H 3225 1300 50  0001 C CNN
+F 3 "" H 3225 1300 50  0001 C CNN
+	1    3225 1300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transformer_1P_1S T?
+U 1 1 61362A06
+P 2950 2975
+F 0 "T?" H 2950 3225 50  0000 C CNN
+F 1 "Transformer_1P_1S" H 2950 2675 50  0000 C CNN
+F 2 "" H 2950 2975 50  0001 C CNN
+F 3 "" H 2950 2975 50  0001 C CNN
+	1    2950 2975
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transformer_1P_1S T?
+U 1 1 61362D1D
+P 2700 4625
+F 0 "T?" H 2700 4875 50  0000 C CNN
+F 1 "Transformer_1P_1S" H 2700 4325 50  0000 C CNN
+F 2 "" H 2700 4625 50  0001 C CNN
+F 3 "" H 2700 4625 50  0001 C CNN
+	1    2700 4625
+	1    0    0    -1  
+$EndComp
+$Comp
+L Transformer_1P_1S T?
+U 1 1 61362EAF
+P 2775 6250
+F 0 "T?" H 2775 6500 50  0000 C CNN
+F 1 "Transformer_1P_1S" H 2775 5950 50  0000 C CNN
+F 2 "" H 2775 6250 50  0001 C CNN
+F 3 "" H 2775 6250 50  0001 C CNN
+	1    2775 6250
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
