@@ -80,20 +80,26 @@ TIMER1_COMPB_vect
 TIMER1_OVF_vect
 **/
 
-
+/**
+ *  stop timer1
+**/
 void disableTIM1()
 {
-   TCCR1B &= ~(0b111 << 0U); ///CS12,CS11,CS10 = 000
+    // Writing TCCR1A WGM bits seems required else hangs up
+    TCCR1A &= ~( (1 << WGM11) | (1<< WGM10) );
+    TCCR1B &= 0b11111000;
 }
 
+/**
+ *  start timer 1
+**/
 void enableTIM1()
 {
-   TCCR1B = (TCCR1B & ~(0b111 << 0U )) | (0b001 << 0U );///CS12,CS11,CS10 = 001 sys clock no prescale
+   TCCR1B |= 1U ;
 }
 
 /*
   do pulse at start of count,
-stop timer
 
 set timer to 0xffff so will roll over ASAP
 pulse out on OC1B 
@@ -109,44 +115,47 @@ set capture mode for pulse input
 void excitePulseSetup()
 {
    cli();
-     // turn_off_builtin_led();
+   {
       disableTIM1();
-      //
-      // at entry OC1B must be a low output normal output
-      TCCR1A &= ~(0b11 << 4U);  // OC1b is normal pin operation
-      // set up high count count and compare reg below it on OCR1B, to prevent transition on pin when mode changed
-      // also TIM will overflow soon and start pulse
-      TCNT1 = 0xFFFF;
+         //
+         // at entry OC1B must be a low output normal output
+        // TCCR1A &= ~(0b11 << 4U);  // OC1b is normal pin operation
+         // set up high count count and compare reg below it on OCR1B, to prevent transition on pin when mode changed
+         // also TIM will overflow soon and start pulse
+       //  TCNT1 = 0U;
 
-      OCR1A = 0xFFFF;
-      uint16_t constexpr pulseCount = systemClockFrequency * transducerCycleTime / 2.f;
-      // pulse duration to drive pulse transformer for half a cycle in miroseconds
-      OCR1B = pulseCount;
-      //set fast pwm mode 15 OCR1A is TOP, OCR1B is comp
-      TCCR1A |= (0b11 << 0U);
-      TCCR1B |= (0b11 << 3U);
-      // set OC1b to set at bottom, clear on match
-      TCCR1A |= (0b10 << 4U);
+       //  OCR1A = 0xFFFF;
+        // uint16_t constexpr pulseCount = systemClockFrequency * transducerCycleTime / 2.f;
+         // pulse duration to drive pulse transformer for half a cycle in miroseconds
+       //  OCR1B = pulseCount;
+         //set fast pwm mode 15 OCR1A is TOP, OCR1B is comp
+       //  TCCR1A |= (0b11 << 0U);
+       //  TCCR1B |= (0b11 << 3U);
+         // set OC1b to set at bottom, clear on match
+       //  TCCR1A |= (0b10 << 4U);
 
-      //disable irqs except for OC1B match  or overflow?
-      // clear irq flags
-      TIFR1 = 0U;
-      // enable only irq on OCR1B compare in TIMER1_COMPB_vect
-      TIMSK1 = (0b1 << 2U);
-      // start pulses
+         //disable irqs except for OC1B match  or overflow?
+         // clear irq flags by writing their bits in TIFR1
+         TIFR1 = 0b00100111;
+        // // enable only irq on OCR1B compare in TIMER1_COMPB_vect
+        // TIMSK1 = (0b1 << 2U);
+        // enable TIM1 overflow interrrupt
+         // start pulses
+          TIMSK1 = 1;// overflow
       enableTIM1();
+   }
    sei();
 }
 
-  int led_count = 0;
+  volatile int16_t led_count = 0;
 
 }
 
 // 
-ISR (TIMER1_COMPB_vect )
+ISR (TIMER1_OVF_vect)
 {
-   //TIFR1 = 0U;
-  if ( led_count++ > 32000){
+  ++led_count;
+  if ( led_count > 244){
      complement_builtin_led();
      led_count = 0;
   }
