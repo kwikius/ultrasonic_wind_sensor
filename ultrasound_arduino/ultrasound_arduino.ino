@@ -8,6 +8,10 @@
 #include <quan/frequency.hpp>
 #include <builtin_led.h>
 
+// for showing output at human visible speed
+#define UWS_SLOW_MOTION_DEBUG
+#define UWS_EXTERNAL_COMPARATOR
+
 namespace {
 /**
 * @brief These macros define quantity literals
@@ -41,7 +45,11 @@ namespace {
 /**
  * @brief ultrasonic transducer resonant frequency
 **/
+#if defined UWS_SLOW_MOTION_DEBUG
+ quan::frequency::kHz constexpr transducerFrequency = 10_kHz;
+#else
  quan::frequency::kHz constexpr transducerFrequency = 40_kHz;
+#endif
  quan::time::us constexpr transducerCycleTime = 1.f/transducerFrequency;
 
 /**
@@ -60,7 +68,13 @@ namespace {
  /**
   * @brief overestimate of time required to setup next tx pulse before TIM1 overflow
   **/ 
+
+#if defined UWS_SLOW_MOTION_DEBUG
+  // to make pulse visible in slow motion
+  uint16_t constexpr txSetupCycles = 2000;
+#else
  uint16_t constexpr txSetupCycles = 200;
+#endif
 
 /**
 *  @brief time in TIM1 period at which to start setting up for next tx Pulse
@@ -69,44 +83,22 @@ namespace {
 
 
 /** IO setup
-Net          Alt      Port PhysPin  ArdPin descr2
-ZeroCrossing1 AIN0     PD6      10       6    ZeroCrossing via resistor hysteresis network
-FilterGnd     AIN1     PD7      11       7    Filter Gnd 
-CmpOut                 PD5       9       5    software comparator output. N.B there is no actual hardware comp output
-SenseDrive    OC1B     PB2      14       10    Tim1 compare match A  
-Tras0   Out            PD2      32       2    transducer address sel 0 
-Tras1   Out            PD3       1       3    transducer address sel 1
+Net           Alt      Port PhysPin  ArdPin descr2
+if external comparator{
+RxDetect      ICP1     PB0      12       D8   
+}else{
+ZeroCrossing1 AIN0     PD6      10       D6    ZeroCrossing via resistor hysteresis network
+FilterGnd     AIN1     PD7      11       D7    Filter Gnd 
+}
+CmpOut                 PD5       9       D5    software comparator output. N.B there is no actual hardware comp output
+SenseDrive    OC1B     PB2      14       D10    Tim1 compare match A  
+Tras0   Out            PD2      32       D2    transducer address sel 0 
+Tras1   Out            PD3       1       D3    transducer address sel 1
 
 **/
 
 /**
-
-ADCSRB.ACME = false ; // no multiplexing of comp negative input to adc pins
-ACSR.ACD = false;
-ACSR.ACBG = false;
-ACSR.ACO = true;  // read only comparator output
-ACSR.ACBG = false;
-ACSR.ACI ; // comparator interrupt flag
-ACSR.ACIE ; // comparator interrupt enable flag
-ACSR.ACIC = true;// enable comparator as capture input to Timer1. Clear flag after mod
-
-Set up comparator capture
-ACSR.ACI0 = 0b00 ;// comparator interrupt on toggle
-ACSR.ACI0 = ob01 ;// reserved
-ACSR.ACI0 = 0b10 ;// comparator interrupt on Falling Output Edge
-ACSR.ACI0 = 011 ;//  comparator interrupt on Rising Output Edge
-**/
-
-/**
-interrrupt vector names
-TIMER1_CAPT_vect
-TIMER1_COMPA_vect
-TIMER1_COMPB_vect
-TIMER1_OVF_vect
-**/
-
-/**
- *  stop timer1
+ *  @brief stop timer1
 **/
 void disableTIM1()
 {
@@ -120,10 +112,10 @@ void disableTIM1()
 **/
 void enableTIM1()
 {
-#if 0
-   TCCR1B |= (1 << CS10) ; // div 1
-#else
+#if defined UWS_SLOW_MOTION_DEBUG
    TCCR1B |= ((1 << CS12) | (1 << CS10)) ; // div 1024 use to slow down the pulse for testing
+#else
+   TCCR1B |= (1 << CS10) ; // div 1
 #endif
 }
 
@@ -155,6 +147,11 @@ on settle time irq
 set capture mode for pulse input
 */
 
+/**
+ * @brief set OCR1B to give a compare event at t
+ * called in irq
+ * @note make sure that t is constexpr
+**/
 inline void setOCR1B(quan::time::us const & t)
 {
    OCR1B = systemClockFrequency * t - 1U;
@@ -165,13 +162,14 @@ inline void setOCR1B(quan::time::us const & t)
 **/
 void txPulseSetup()
 {
-//   uint16_t constexpr pulseCount = systemClockFrequency * transducerCycleTime / 2.f;
    setOCR1B(transducerCycleTime / 2.f);
    // set OC1B to set at BOTTOM, clear on pulseCount match
    TCCR1A |= (0b10 << COM1B0);
    // clear irq flags (N.B. write a 1 to bit to clear flag)
    TIFR1 = 0b00100111;
    // enable the Pulse start and end interrrupts
+   // pulse starts at TIM1 overflow
+   // ends on OCR1B compare
    TIMSK1 |= (0b1 << OCIE1B) | (0b1 << TOIE1);
 
    TIM1state = TIM1mode::preTXpulse;
@@ -182,6 +180,11 @@ void txPulseInitialSetup()
    cli();
    {
       disableTIM1();
+         //set up  OC1B(PB2) as low output 
+         
+         PORTB &= ~(1U << 2U);
+         DDRB  |= (1U << 2U);
+        
          // set up high count count and compare reg below it on OCR1B, to prevent transition on pin when mode changed
          // also TIM will overflow soon and start pulse
          TCNT1 = 0xFFFE;
@@ -192,7 +195,7 @@ void txPulseInitialSetup()
          TCCR1B |= (0b11 << 3U);
          txPulseSetup();
         
-       enableTIM1();
+       enableTIM1();  // to start
    }
    sei();
 }
@@ -208,7 +211,6 @@ ISR (TIMER1_OVF_vect)
    switch (TIM1state){
       case TIM1mode::preTXpulse:
          TIM1state = TIM1mode::inTXpulse;
-         turn_on_builtin_led();
          break;
       default:
          break;
@@ -227,7 +229,6 @@ ISR (TIMER1_COMPB_vect)
 {
    switch(TIM1state){
       case TIM1mode::inTXpulse:
-         turn_off_builtin_led();
          /// @todo switch to rx address
          // change TX pulse pin output mode to normal
          TCCR1A &= ~((1U << COM1B1) | (1U << COM1B0));
@@ -236,20 +237,32 @@ ISR (TIMER1_COMPB_vect)
          break;
        case TIM1mode::inTXpulseSettlingDelay:
          turn_on_builtin_led();
-         // end of settling delay
-         // connect comparator input to capture
+
          setOCR1B(txSetupStart);
          TIM1state = TIM1mode::inRXcapture;
+         //enable capture irq
+         TIMSK1 |= (1U << ICIE1 );
+         //clear flag
+         TIFR1  = (1<< ICF1);
          break;
-        case TIM1mode::inRXcapture:
+       case TIM1mode::inRXcapture:
+         //disable capture irq
+         TIMSK1 &= ~(1U << ICIE1 );
+         //clear flag
+         TIFR1  = (1<< ICF1);
          turn_off_builtin_led();
-         // Did we get a RX pulse?
+   
          txPulseSetup();
          break;
        default:
          // shouldnt get here!
          break; 
    }
+}
+
+namespace {
+   volatile uint16_t capture_value = 0U;
+   volatile bool new_capture = false;
 }
 
 /** 
@@ -263,17 +276,40 @@ ISR (TIMER1_CAPT_vect)
    e.g NS, SN, EW, WE
    and
    **/
+   capture_value = ICR1;
+   //disable capture irq
+   TIMSK1 &= ~(1U << ICIE1 );
+            //clear flag
+   TIFR1  = (1<< ICF1);
+   
+   new_capture = true;
 }
 
 void setup()
 {
+   Serial.begin(115200);
    builtin_led_setup();
    turn_off_builtin_led();
    // set up 
    txPulseInitialSetup();
+
+   Serial.println("ultra starting");
+   
 }
 
 void loop()
 {
-
+   
+   cli();
+   bool got = new_capture;
+   uint16_t capt = capture_value;
+   if (got){
+      new_capture = false;
+   }
+   sei();
+   if( got){
+      Serial.print("Got ");
+      Serial.print(capt);
+      Serial.println();
+   }
 }
