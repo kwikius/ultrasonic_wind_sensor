@@ -81,7 +81,6 @@ namespace {
 **/
  quan::time::us constexpr txSetupStart = tim1Period - txSetupCycles / systemClockFrequency;
 
-
 /** IO setup
 Net           Alt      Port PhysPin  ArdPin descr2
 if external comparator{
@@ -92,8 +91,8 @@ FilterGnd     AIN1     PD7      11       D7    Filter Gnd
 }
 CmpOut                 PD5       9       D5    software comparator output. N.B there is no actual hardware comp output
 SenseDrive    OC1B     PB2      14       D10    Tim1 compare match A  
-Tras0   Out            PD2      32       D2    transducer address sel 0 
-Tras1   Out            PD3       1       D3    transducer address sel 1
+Tras0   Out            PC2      25       A2    transducer address sel 0 
+Tras1   Out            PC3      26       A3    transducer address sel 1
 
 **/
 
@@ -299,13 +298,13 @@ void setup()
 
 void loop()
 {
-   
+   uint16_t capt;
    cli();
-   bool got = new_capture;
-   uint16_t capt = capture_value;
-   if (got){
-      new_capture = false;
-   }
+      bool const got = new_capture;
+      if (got){
+         capt = capture_value;
+         new_capture = false;
+      }
    sei();
    if( got){
       Serial.print("Got ");
