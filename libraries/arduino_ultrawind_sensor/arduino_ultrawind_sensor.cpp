@@ -78,9 +78,11 @@ namespace {
    #endif
 
    /**
-   *  @brief time in TIM1 period at which to start setting up for next tx Pulse
+   *  @brief time required to start setting up for next tx Pulse
    **/
-   quan::time::us constexpr txSetupStart = tim1Period - txSetupCycles / systemClockFrequency;
+   quan::time::us constexpr txSetupTime = txSetupCycles / systemClockFrequency;
+
+   quan::time::us constexpr rxCaptureTime = tim1Period - txSetupTime;
 
    /** IO setup
    Net           Alt      Port PhysPin  ArdPin descr2
@@ -164,6 +166,7 @@ namespace {
    set capture mode for pulse input
    */
 
+#if 0
    /**
     * @brief set OCR1B to give a compare event at t
     * called in irq
@@ -173,28 +176,52 @@ namespace {
    {
       OCR1B = systemClockFrequency * t - 1U;
    }
+
+   inline void setOCR1A(quan::time::us const & t)
+   {
+      OCR1A = systemClockFrequency * t - 1U;
+   }
+#else
+   // verify its constexpr
+   #define setOCR1B(Time) \
+      {\
+      constexpr auto name = systemClockFrequency * ( Time )-1U; \
+      OCR1B = name; \
+      }
+
+      #define setOCR1A(Time) \
+      {\
+      constexpr auto name = systemClockFrequency * ( Time )-1U; \
+      OCR1A = name; \
+      }
+#endif
+   
    /**
    * @brief usually called in interrupt.
    * Setup for next tx pulse
    **/
    void txPulseSetup()
    {
-      start_next_flight(); 
+      //start_next_flight(); 
       set_transmit_address();
-
+      // N.B OCR1A, OCR1B double buffered, so will load at TOV
+      setOCR1A(txSettlingDelayEnd);
       setOCR1B(transducerCycleTime / 2.f);
       // set OC1B to set at BOTTOM, clear on pulseCount match
       TCCR1A |= (0b10 << COM1B0);
-      // clear irq flags (N.B. write a 1 to bit to clear flag)
-      TIFR1 = 0b00100111;
       // enable the Pulse start and end interrrupts
       // pulse starts at TIM1 overflow
       // ends on OCR1B compare
-      TIMSK1 |= (0b1 << OCIE1B) | (0b1 << TOIE1);
-
+     // TIMSK1 |= ((0b1 << OCIE1B) | (0b1 << TOIE1));
+      TIMSK1 = (0b1 << TOIE1);
+      // clear irq flags (N.B. write a 1 to bit to clear flag)
+      TIFR1 = 0b00100111;
       TIM1state = TIM1mode::preTXpulse;
    }
 
+   void getCapture()
+   {
+   }
 }// namespace
 
 void txPulseInitialSetup()
@@ -210,12 +237,10 @@ void txPulseInitialSetup()
          PORTB &= ~(1U << 2U);
          DDRB  |= (1U << 2U);
         
-         // set up high count count and compare reg below it on OCR1B, to prevent transition on pin when mode changed
-         // also TIM will overflow soon and start pulse
+         // TIM will overflow ASAP and start pulse
          TCNT1 = 0xFFFE;
          
          //set fast pwm mode 15 OCR1A is TOP, OCR1B is comp
-         OCR1A = 0xFFFF; // TOP
          TCCR1A |= (0b11 << 0U);
          TCCR1B |= (0b11 << 3U);
          txPulseSetup();
@@ -225,61 +250,52 @@ void txPulseInitialSetup()
    sei();
 }
 
-/**
-* Overflow at rise of Tx pulse when TCNT1 overflows
-* 
-**/
 ISR (TIMER1_OVF_vect)
 {
    switch (TIM1state){
       case TIM1mode::preTXpulse:
+         // tx pulse has just gone high
          TIM1state = TIM1mode::inTXpulse;
+         TIMSK1 = (1U << OCIE1B);
+         TIFR1 = 0b00100111;
+         break;
+      case TIM1mode::inTXpulseSettlingDelay:
+         // start of rx capture 
+         TIM1state = TIM1mode::inRXcapture;
+         // enable Capture 
+         TIMSK1 = (1U << ICIE1 ) | (01U << OCIE1B) ;
+         //clear capture flag
+         TIFR1 = 0b00100111;
          break;
       default:
+       //  turn_on_builtin_led();
          break;
    }
 }
-/**
- * --- states ---
- * sendingTxPulse
- * txPulseSettlingDelay
- * setupCapture
- * getCaptureOrTimeout
- * rxSettlingDelay
-**/
 
 ISR (TIMER1_COMPB_vect)
 {
    switch(TIM1state){
       case TIM1mode::inTXpulse:
-         /// @todo switch to rx address
-         // change TX pulse pin output mode to normal
+         // end of tx pulse
+         // disable pulse output
          TCCR1A &= ~((1U << COM1B1) | (1U << COM1B0));
          set_receive_address();
-         setOCR1B(txSettlingDelayEnd);
+         // N.B OCR1A, OCR1B double buffered, so will load at TOV
+         setOCR1B(rxCaptureTime);
+         setOCR1A(rxCaptureTime + txSetupTime);
          TIM1state = TIM1mode::inTXpulseSettlingDelay;
+         TIMSK1 = (0b1 << TOIE1);
+         TIFR1 = 0b00100111;
          break;
-       case TIM1mode::inTXpulseSettlingDelay:
-        // turn_on_builtin_led();
-
-         setOCR1B(txSetupStart);
-         TIM1state = TIM1mode::inRXcapture;
-         //enable capture irq
-         TIMSK1 |= (1U << ICIE1 );
-         //clear flag
-         TIFR1  = (1<< ICF1);
-         break;
-       case TIM1mode::inRXcapture:
-         //disable capture irq
-         TIMSK1 &= ~(1U << ICIE1 );
-         //clear flag
-         TIFR1  = (1<< ICF1);
-        // turn_off_builtin_led();
-   
+      case TIM1mode::inRXcapture:
+         // end of rxCapture
+         getCapture();
          txPulseSetup();
          break;
-       default:
-         // shouldnt get here!
-         break; 
+      default:
+         turn_on_builtin_led();
+         break;
    }
+
 }

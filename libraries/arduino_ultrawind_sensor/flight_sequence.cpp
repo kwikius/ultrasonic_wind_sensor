@@ -55,10 +55,10 @@ namespace {
    // rotates fwd by 1 in txPulseSetup() so start at last to get first
    volatile uint8_t current_flight = flight_east_west;
    // raw flight capture values indexed by current flight
-   volatile uint16_t ll_flight_capture_values[4] = {0U};
+   volatile uint32_t ll_flight_capture_values[4] = {0U};
 
   // user layer values
-   volatile uint16_t flight_capture_values[4] = {0U};
+   volatile uint32_t flight_capture_values[4] = {0U};
    volatile bool new_capture = false;
 
 } // ~ namespace
@@ -110,7 +110,7 @@ ISR (TIMER1_CAPT_vect)
 
 namespace {
 
-   quan::time::us convert_capture(uint16_t capture_value)
+   quan::time::us convert_capture(uint32_t capture_value)
    {
       return capture_value / systemClockFrequency;
    }
@@ -142,7 +142,7 @@ bool get_ultrasound_capture(quan::time::us & result)
     cli();
     bool const have_capture = new_capture;
     new_capture = false;
-    uint16_t const new_capture_value = capture_value;
+    uint32_t const new_capture_value = capture_value;
     sei();
     if ( have_capture){
        quan::time::us const t = new_capture_value / systemClockFrequency;
