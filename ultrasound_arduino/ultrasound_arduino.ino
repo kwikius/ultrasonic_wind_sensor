@@ -28,6 +28,5 @@ void loop()
           Serial.println(" us");
          }
       }
-      
    }
 }

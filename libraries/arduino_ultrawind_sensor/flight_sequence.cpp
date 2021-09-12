@@ -1,27 +1,9 @@
 
 #include <Arduino.h>
-#include <quan.h>
-#include <quan/time.hpp>
-#include <quan/frequency.hpp>
 
 void set_ultrasound_address(uint8_t addr);
 
 namespace {
-
-   QUAN_QUANTITY_LITERAL(frequency, MHz)
-   QUAN_QUANTITY_LITERAL(frequency, kHz)
-   QUAN_QUANTITY_LITERAL(time, us)
-   QUAN_QUANTITY_LITERAL(time, ms)
-
-#if defined F_CPU
- #if F_CPU == 16000000
-   quan::frequency::MHz constexpr systemClockFrequency = 16_MHz;
- #else
-   #error unknown cpu frequency
- #endif
-#else
- #error F_CPU undefined
-#endif
 
    // transducer addresses
    constexpr uint8_t north_transducer = 3U;
@@ -52,21 +34,36 @@ namespace {
    };
 
    // id of the current flight
-   // rotates fwd by 1 in txPulseSetup() so start at last to get first
-   volatile uint8_t current_flight = flight_east_west;
+   volatile uint8_t current_flight = flight_north_south;
    // raw flight capture values indexed by current flight
-   volatile uint32_t ll_flight_capture_values[4] = {0U};
+   // as they are updated in irq
+   volatile uint16_t ll_flight_capture_values[4] = {0U};
 
-  // user layer values
-   volatile uint32_t flight_capture_values[4] = {0U};
+  // buffered user layer raw values
+   // valid when new_capture is true
+   volatile uint16_t flight_capture_values[4] = {0U};
    volatile bool new_capture = false;
 
 } // ~ namespace
 
-   // set up transmit address for current flight
-void set_transmit_address()
+
+// get ref to latest captures or null if not yet available
+volatile uint16_t * get_captures()
 {
-   set_ultrasound_address(flight_transmit_address[current_flight]);
+   bool new_capt = new_capture;
+   new_capture = false;
+   if ( new_capt){
+     return flight_capture_values;
+   }else {
+      return nullptr;
+   }
+}
+namespace {
+      // set up transmit address for current flight
+   void set_transmit_address()
+   {
+      set_ultrasound_address(flight_transmit_address[current_flight]);
+   }
 }
 
 // set up receive address for current flight
@@ -87,67 +84,49 @@ void start_next_flight()
          new_capture = true;
       }
    }
-}
-
-/** 
-   receive pulse capture from comparator
-**/
-ISR (TIMER1_CAPT_vect)
-{
-  /**
-   read the ICR1 value and store in array
-   for processing by main
-   e.g NS, SN, EW, WE
-   and
-   **/
-   ll_flight_capture_values[current_flight] = ICR1;
-   //disable capture irq
-   TIMSK1 &= ~(1U << ICIE1 );
-
-   //new_capture = true;
-   TIFR1  = (1<< ICF1);
+   set_transmit_address();
 }
 
 namespace {
+  volatile uint16_t ll_capture_value = 0U;
+  volatile bool ll_new_capture_value = false;
+}
 
-   quan::time::us convert_capture(uint32_t capture_value)
+/** 
+   receive pulse capture
+**/
+ISR (TIMER1_CAPT_vect)
+{
+   ll_capture_value = ICR1;
+   TIMSK1 &= ~(1U << ICIE1 );
+   ll_new_capture_value = true;
+}
+
+namespace {
+   /*
+    call from irq only
+   */
+   bool ll_get_capture(volatile uint16_t & result)
    {
-      return capture_value / systemClockFrequency;
+      bool const new_capt = ll_new_capture_value;
+      ll_new_capture_value = false;
+      if ( new_capt){
+         result = ll_capture_value;
+      }
+      return new_capt;
    }
 }
-
-
-/*
-  returns true if new capture was put in result. If true also allows new capture
-  else false and no change
-  if capture timeout will return true and 0 in result
-*/
-bool get_ultrasound_capture(quan::time::us (& result)[4])
+/**
+* 
+**/
+void validate_capture()
 {
-   if ( new_capture){
-      for ( uint8_t i = 0; i < 4 ; ++i){
-         result[i] = convert_capture(flight_capture_values[i]);
-      }
-      new_capture = false;
-      return true;
-   }else {
-      return false;
-   } 
-}
-
-#if 0
-bool get_ultrasound_capture(quan::time::us & result)
-{
-    
-    cli();
-    bool const have_capture = new_capture;
-    new_capture = false;
-    uint32_t const new_capture_value = capture_value;
-    sei();
-    if ( have_capture){
-       quan::time::us const t = new_capture_value / systemClockFrequency;
-       result = t;
+    volatile uint16_t & target = ll_flight_capture_values[current_flight];
+    if (!ll_get_capture(target)){
+       target = 0U;
     }
-    return have_capture;
 }
-#endif
+
+
+
+

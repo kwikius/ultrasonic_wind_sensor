@@ -11,6 +11,7 @@
 
 // for showing output at human visible speed
 //#define UWS_SLOW_MOTION_DEBUG
+// TODO try using atmega328 comparator. Unfortunately it doesnt have an output
 //#define UWS_EXTERNAL_COMPARATOR
 
 namespace {
@@ -59,7 +60,7 @@ namespace {
    *  output pulse, which should reduce the settling delay. 
    *  (Currently pulse is transducerCycleTime/2)
    **/
-   quan::time::us constexpr txSettlingDelayEnd = 1_ms;
+   quan::time::us constexpr txSettlingDelay = 1_ms;
 
    /**
    * @brief time from TCNT1 == 0 to next TCNT1 == 0
@@ -111,7 +112,7 @@ namespace {
 
 void set_ultrasound_address(uint8_t addr)
 {
-    PORTC = (PORTC & ~(0b11 << 2U)) | ((addr & 0b11) << 2U);
+   PORTC = (PORTC & ~(0b11 << 2U)) | ((addr & 0b11) << 2U);
 }
 
 namespace {
@@ -121,7 +122,7 @@ namespace {
    **/
    void disableTIM1()
    {
-       // Writing TCCR1A WGM bits seems required else hangs up
+       //errata : for stopping clock Writing TCCR1A WGM bits seems required else hangs up
        TCCR1A &= ~((1 << WGM11) | (1<< WGM10));
        TCCR1B &= ~((1 << CS12) | (1 << CS11) | (1 << CS10) );
    }
@@ -150,21 +151,6 @@ namespace {
    };
 
    volatile auto TIM1state = TIM1mode::undefined;
-
-   /*
-     do pulse at start of count,
-   stop timer ( alternatively could get it in TOV1 interrrupt in practise
-   set timer to 0xffff so will roll over ASAP
-   pulse out on OC1B 
-   clear TIFR1.OCF1B
-   set irq TIMSK1.OIEC1B
-   start timer which sends pulse
-   on end of pulse irq
-   set OC1B to plain output low
-   set OCR1B to settle time
-   on settle time irq
-   set capture mode for pulse input
-   */
 
 #if 0
    /**
@@ -202,31 +188,27 @@ namespace {
    **/
    void txPulseSetup()
    {
-      //start_next_flight(); 
-      set_transmit_address();
+      start_next_flight(); 
+      
       // N.B OCR1A, OCR1B double buffered, so will load at TOV
-      setOCR1A(txSettlingDelayEnd);
+      setOCR1A(txSettlingDelay);
       setOCR1B(transducerCycleTime / 2.f);
       // set OC1B to set at BOTTOM, clear on pulseCount match
       TCCR1A |= (0b10 << COM1B0);
-      // enable the Pulse start and end interrrupts
+   
       // pulse starts at TIM1 overflow
-      // ends on OCR1B compare
-     // TIMSK1 |= ((0b1 << OCIE1B) | (0b1 << TOIE1));
+      // enable the Pulse start interrrupt
       TIMSK1 = (0b1 << TOIE1);
       // clear irq flags (N.B. write a 1 to bit to clear flag)
       TIFR1 = 0b00100111;
       TIM1state = TIM1mode::preTXpulse;
    }
 
-   void getCapture()
-   {
-   }
+
 }// namespace
 
 void txPulseInitialSetup()
 {
-   
    cli();
    {
       disableTIM1();
@@ -243,6 +225,7 @@ void txPulseInitialSetup()
          //set fast pwm mode 15 OCR1A is TOP, OCR1B is comp
          TCCR1A |= (0b11 << 0U);
          TCCR1B |= (0b11 << 3U);
+
          txPulseSetup();
         
        enableTIM1();  // to start
@@ -262,9 +245,9 @@ ISR (TIMER1_OVF_vect)
       case TIM1mode::inTXpulseSettlingDelay:
          // start of rx capture 
          TIM1state = TIM1mode::inRXcapture;
-         // enable Capture 
-         TIMSK1 = (1U << ICIE1 ) | (01U << OCIE1B) ;
-         //clear capture flag
+         // enable Capture irq and end of capture irq
+         TIMSK1 = (1U << ICIE1 ) | (1U << OCIE1B) ;
+         //clear  irq flags
          TIFR1 = 0b00100111;
          break;
       default:
@@ -285,12 +268,13 @@ ISR (TIMER1_COMPB_vect)
          setOCR1B(rxCaptureTime);
          setOCR1A(rxCaptureTime + txSetupTime);
          TIM1state = TIM1mode::inTXpulseSettlingDelay;
-         TIMSK1 = (0b1 << TOIE1);
+         TIMSK1 = (1U << TOIE1);
          TIFR1 = 0b00100111;
          break;
       case TIM1mode::inRXcapture:
          // end of rxCapture
-         getCapture();
+         // get capture if any
+         validate_capture();
          txPulseSetup();
          break;
       default:
@@ -298,4 +282,31 @@ ISR (TIMER1_COMPB_vect)
          break;
    }
 
+}
+
+namespace {
+
+   quan::time::us convert_capture(uint16_t capture_value)
+   {
+      return capture_value / systemClockFrequency + txSettlingDelay;
+   }
+}
+
+bool get_ultrasound_capture(quan::time::us (& result)[4])
+{
+   cli();
+   volatile uint16_t * captures = get_captures();
+   if ( captures == nullptr){
+     sei();
+     return false;
+   }
+   uint16_t local_captures[4];
+   for ( uint16_t i = 0; i < 4; ++i){
+      local_captures[i] = captures[i];
+   }
+   sei();
+   for ( uint32_t i = 0; i < 4 ;++i){
+      result[i] = convert_capture(local_captures[i]);
+   }
+   return true;
 }
