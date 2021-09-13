@@ -14,7 +14,7 @@
 #include <quan/fixed_quantity/operations/atan2.hpp>
 #include <quan/two_d/vect.hpp>
 #include "resource.hpp"
-#include "windsensor_packet.hpp"
+#include "../../libraries/windsensor_packet/windsensor_packet.h"
 
 namespace {
 

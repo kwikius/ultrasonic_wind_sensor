@@ -3,6 +3,7 @@
 
 #include <quan/tracker/zapp4/crc.hpp>
 #include <quan/tracker/zapp4/do_crc.hpp>
+#include <quan/tracker/zapp4/decode_packet.hpp>
 #include <quan/uav/cobs/static_packet_parser.hpp>
 #include <quan/velocity.hpp>
 #include <quan/angle.hpp>

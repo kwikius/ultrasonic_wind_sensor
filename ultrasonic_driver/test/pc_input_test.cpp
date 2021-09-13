@@ -2,7 +2,7 @@
 
 #include <quan/serial_port.hpp>
 #include <iostream>
-#include </home/andy/cpp/projects/stm32l4_v1/cube_generated/Inc/windsensor_packet.hpp>
+#include </home/andy/cpp/projects/wind_sensors/ultrasonic_wind_sensor/libraries/windsensor_packet/windsensor_packet.h>
 #include <quan/tracker/zapp4/decode_packet.hpp>
 #include <quan/out/velocity.hpp>
 #include <quan/out/angle.hpp>
@@ -14,8 +14,8 @@
 
 int main()
 {
-
-   quan::serial_port sp("/dev/ttyACM0");
+   quan::serial_port sp("/dev/ttyUSB0");
+  // quan::serial_port sp("/dev/ttyACM0");
 
    sp.init(B115200);
 

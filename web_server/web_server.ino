@@ -20,8 +20,7 @@
 #include <web_pages.h>
 #include <quan.h>
 
-#include <decode_packet.hpp>
-#include "windsensor_packet.hpp"
+#include <windsensor_packet.h>
 
 #if defined ESP8266
    HardwareSerial& debugSerial = Serial;
@@ -187,8 +186,8 @@ namespace{
       }//~if
    }
 
-   cobs::static_packet_parser<
-      cobs::get_encoded_length<sizeof(velocity_and_direction_packet)>()
+   quan::uav::cobs::static_packet_parser<
+      quan::uav::cobs::get_encoded_length<sizeof(velocity_and_direction_packet)>()
    > parser;
 
    void parse_input()
@@ -201,7 +200,7 @@ namespace{
             uint16_t const packet_id = static_cast<uint16_t>(decoded_packet_buffer[0]) 
             + (static_cast<uint16_t>(decoded_packet_buffer[1]) << 8U);
             if ( static_cast<PacketID>(packet_id) == PacketID::WindSpeedAndDirection){
-               if ( !zapp4::decode_packet<velocity_and_direction_packet>(
+               if ( !quan::tracker::zapp4::decode_packet<velocity_and_direction_packet>(
                      packet_length, parser,
                      [](velocity_and_direction_packet const & p ){
                         String const text = "{\"windspeed\":" + String(p.values.speed.numeric_value(),2) + 

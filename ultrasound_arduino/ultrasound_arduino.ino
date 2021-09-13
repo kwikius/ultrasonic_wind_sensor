@@ -3,7 +3,7 @@
 #include <builtin_led.h>
 #include <arduino_ultrawind_sensor.h>
 #include <wind_sensor.h>
-
+#include <windsensor_packet.h>
 
 namespace {
 
@@ -33,6 +33,7 @@ void setup()
 }
 
 namespace {
+
    void readWindSensor()
    {
        quan::velocity::m_per_s const wind_speed = windSensor.getWindSpeed();
@@ -46,12 +47,40 @@ namespace {
        Serial.print(wind_direction.numeric_value());
        Serial.println(" deg");
    }
+
+// send packet using zapp4 protocol
+   template <typename Packet>
+   void send_packet( Packet const & packet)
+   {
+      uint8_t encoded[quan::uav::cobs::get_encoded_length<sizeof(packet)>()];
+      quan::uav::cobs::encode (packet.ar,sizeof(packet),encoded);
+
+      Serial.write('\0'); // frame
+      Serial.write(reinterpret_cast<char*>(encoded),sizeof(encoded));
+      Serial.write('\0'); // frame
+   }
+
+   template <typename Packet, typename... ValueTypes>
+   void send_packet( ValueTypes const &... values )
+   {
+      Packet packet{values...};
+      send_packet(packet);
+   }
+
+   void sendWindSensor() 
+   {
+      auto const speed = windSensor.getWindSpeed();
+      auto const direction = windSensor.getWindDirection();
+
+      send_packet<velocity_and_direction_packet>(speed,direction);
+   }
 }
 
 void loop()
 {
     windSensor.update();
 
-    readWindSensor();
+    //readWindSensor();
+    sendWindSensor();
 }
 
