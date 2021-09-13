@@ -2,9 +2,15 @@
 
 #include <builtin_led.h>
 #include <arduino_ultrawind_sensor.h>
+#include <wind_sensor.h>
 
 
 namespace {
+
+  QUAN_QUANTITY_LITERAL( length,mm)
+  QUAN_QUANTITY_LITERAL( time,us)
+
+  wind_sensor_t windSensor{150_mm,250_mm};
 
 }
 
@@ -16,34 +22,36 @@ void setup()
 
    txPulseInitialSetup();
 
-   Serial.println("ultrasound wind sensor starting");
+   Serial.println("ultrasound wind sensor");
 
-   
-   
+   // TODO set in eeprom
+   windSensor.setNorthSouthBias(0_us);
+   windSensor.setEastWestBias(0_us);
+
+   windSensor.init();
+
 }
 
 namespace {
-   void print_raw(quan::time::us(&durations)[4])
+   void readWindSensor()
    {
-      for ( uint8_t i = 0U; i < 4U;++i){
-         Serial.print(durations[i].numeric_value());
-         if ( i < 3){
-            Serial.print( " us, ");
-         }else{
-            Serial.println(" us");
-         }
-      }
-   }
+       quan::velocity::m_per_s const wind_speed = windSensor.getWindSpeed();
+       quan::angle::deg wind_direction = windSensor.getWindDirection();
 
-   
+       Serial.print("wind speed = ");
+       Serial.print(wind_speed.numeric_value());
+       Serial.print(" m/s");
+
+       Serial.print(", direction = ");
+       Serial.print(wind_direction.numeric_value());
+       Serial.println(" deg");
+   }
 }
 
 void loop()
 {
-   quan::time::us durations[4];
+    windSensor.update();
 
-   if( get_ultrasound_capture(durations)){
-       print_raw(durations);
-   }
+    readWindSensor();
 }
 
