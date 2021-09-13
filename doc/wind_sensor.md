@@ -1,6 +1,6 @@
 
 
-# Ultrasonic Wind speed and direction sensor from car reversing sensor kit.
+# Ultrasonic Wind speed and direction sensor from car reversing sensor kit and an Arduino Mini
 
 A £10 car sensor reversing kit can be converted into an inexpensive but highly accurate wind speed and direction sensor.
 
@@ -44,9 +44,12 @@ I opted not to try to reprogram the mcu on the pcb, preferring to breakout the r
 ![car sensor breakout connector](breakout.png "car sensor breakout connector")
 ![car sensor control box showing breakout connector](wind_sensor_control_box.jpg "[car sensor control box showing breakout connector")
 
-I had a [stm32L432 nucleo](https://www.st.com/en/evaluation-tools/nucleo-l432kc.html) which has a clock speed of 80 Mhz, 40 k of ram , as well as useful analog peripherals including 5Mbps ADC, 2 comparators and an op-amp on board.
+Originally I used a [stm32L432 nucleo](https://www.st.com/en/evaluation-tools/nucleo-l432kc.html) which has a clock speed of 80 Mhz, 40 k of ram , 
+as well as useful analog peripherals including 5Mbps ADC, 2 comparators and an op-amp on board, but now I have 
+[ported the code to an atmega328](../ultrasound_arduino/ultrasound_arduino.ino "arduino sketch"), and am quite pleased with the performance of the wind sensor
+driven by the venerable Arduino mcu.
 
-I also had an ESP32 to send the data to a wifi network. 
+I also used an ESP32 to send the data to a wifi network. At some point  I hope to port the code to the ESP32, so that there will only be a need for one MCU.
 
 These were mounted on a breadboard
 
