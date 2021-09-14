@@ -31,12 +31,13 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:atmega328p
 LIBS:reversing_sensor_circuit-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 2 3
+Sheet 2 4
 Title ""
 Date ""
 Rev ""
@@ -102,11 +103,15 @@ F 3 "" H 7900 1875 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	7725 1300 8150 1300
+	7725 1300 7900 1300
+Wire Wire Line
+	7900 1300 8150 1300
 Wire Wire Line
 	7900 1300 7900 1425
 Wire Wire Line
-	7050 1300 7425 1300
+	7050 1300 7225 1300
+Wire Wire Line
+	7225 1300 7425 1300
 Wire Wire Line
 	7225 1300 7225 1500
 Wire Wire Line
@@ -147,11 +152,19 @@ F 3 "" H 4215 1050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3625 1500 4000 1500
+	3625 1500 3750 1500
+Wire Wire Line
+	3750 1500 3850 1500
+Wire Wire Line
+	3850 1500 4000 1500
 Wire Wire Line
 	3750 1500 3750 1600
 Wire Wire Line
-	3625 1100 4050 1100
+	3625 1100 3700 1100
+Wire Wire Line
+	3700 1100 3850 1100
+Wire Wire Line
+	3850 1100 4050 1100
 Wire Wire Line
 	4000 1500 4000 1200
 Wire Wire Line
@@ -283,11 +296,19 @@ F 3 "" H 3940 2725 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3350 3175 3725 3175
+	3350 3175 3475 3175
+Wire Wire Line
+	3475 3175 3575 3175
+Wire Wire Line
+	3575 3175 3725 3175
 Wire Wire Line
 	3475 3175 3475 3275
 Wire Wire Line
-	3350 2775 3775 2775
+	3350 2775 3425 2775
+Wire Wire Line
+	3425 2775 3575 2775
+Wire Wire Line
+	3575 2775 3775 2775
 Wire Wire Line
 	3725 3175 3725 2875
 Wire Wire Line
@@ -387,11 +408,19 @@ F 3 "" H 3690 4375 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3100 4825 3475 4825
+	3100 4825 3225 4825
+Wire Wire Line
+	3225 4825 3325 4825
+Wire Wire Line
+	3325 4825 3475 4825
 Wire Wire Line
 	3225 4825 3225 4925
 Wire Wire Line
-	3100 4425 3525 4425
+	3100 4425 3175 4425
+Wire Wire Line
+	3175 4425 3325 4425
+Wire Wire Line
+	3325 4425 3525 4425
 Wire Wire Line
 	3475 4825 3475 4525
 Wire Wire Line
@@ -491,11 +520,19 @@ F 3 "" H 3765 6000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3175 6450 3550 6450
+	3175 6450 3300 6450
+Wire Wire Line
+	3300 6450 3400 6450
+Wire Wire Line
+	3400 6450 3550 6450
 Wire Wire Line
 	3300 6450 3300 6550
 Wire Wire Line
-	3175 6050 3600 6050
+	3175 6050 3250 6050
+Wire Wire Line
+	3250 6050 3400 6050
+Wire Wire Line
+	3400 6050 3600 6050
 Wire Wire Line
 	3550 6450 3550 6150
 Wire Wire Line
@@ -633,14 +670,12 @@ Wire Wire Line
 	6650 3825 6550 3825
 Wire Wire Line
 	6650 3925 6550 3925
-Text HLabel 8275 3625 2    60   Input ~ 0
+Text HLabel 8650 3625 2    60   Input ~ 0
 SenseDrive
 Text HLabel 8225 3225 2    60   Output ~ 0
 RawSense
 Wire Wire Line
 	8225 3225 8050 3225
-Wire Wire Line
-	8275 3625 8050 3625
 $Comp
 L GND #PWR?
 U 1 1 6074215A
@@ -655,9 +690,11 @@ $EndComp
 Wire Wire Line
 	8050 4325 8125 4325
 Wire Wire Line
-	8125 4800 8125 4325
+	8125 4325 8125 4800
 Wire Wire Line
-	6475 4800 8125 4800
+	8125 4800 7800 4800
+Wire Wire Line
+	7800 4800 6475 4800
 Wire Wire Line
 	7800 4800 7800 4925
 Wire Wire Line
@@ -745,4 +782,19 @@ F 3 "" H 2775 6250 50  0001 C CNN
 	1    2775 6250
 	1    0    0    -1  
 $EndComp
+$Comp
+L R R?
+U 1 1 61413331
+P 8325 3625
+F 0 "R?" V 8405 3625 50  0000 C CNN
+F 1 "R" V 8325 3625 50  0000 C CNN
+F 2 "" V 8255 3625 50  0001 C CNN
+F 3 "" H 8325 3625 50  0001 C CNN
+	1    8325 3625
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8650 3625 8475 3625
+Wire Wire Line
+	8175 3625 8050 3625
 $EndSCHEMATC
