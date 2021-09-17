@@ -47,9 +47,9 @@ struct wind_sensor_t{
     * @brief height from transducer to sound reflecting pad
     **/
    quan::length::mm const m_sensor_height;
-   quan::angle::rad const m_flight_angle;
-   QUAN_FLOAT_TYPE const m_cos_flight_angle;
-   quan::length::mm const m_flight_distance;
+  // quan::angle::rad const m_flight_angle;
+  // QUAN_FLOAT_TYPE const m_cos_flight_angle;
+  // quan::length::mm const m_flight_distance;
 private:
 
    quan::velocity::m_per_s solve_wind_velocity(quan::time::us const & tF, quan::time::us const & tR)const;

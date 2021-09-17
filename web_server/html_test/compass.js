@@ -1,10 +1,3 @@
-
-
-#include "web_pages.h"
-namespace {
-
-constexpr char compass_js[] = R"(
-
 function vect(x,y)
 {
    this.x = x;
@@ -92,14 +85,4 @@ function draw_wind(direction_deg, speed_knots)
    text(context,centre, rect_side/2 - ( border + 20));
 }
 
-)";
-
-} // ~namespace
-
-const char* get_web_page_compass_js()
-{
-   return compass_js;
-}
-
-//----------------------------------------------
 

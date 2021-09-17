@@ -12,11 +12,8 @@ namespace {
 }
 
 wind_sensor_t::wind_sensor_t(quan::length::mm const & transducer_radius_in,quan::length::mm sensor_height_in)
-:  m_transducer_radius{transducer_radius_in},
+: m_transducer_radius{transducer_radius_in},
   m_sensor_height{sensor_height_in},
-  m_flight_angle{ quan::atan2(m_sensor_height,m_transducer_radius)},
-  m_cos_flight_angle{cos(m_flight_angle)},
-  m_flight_distance{ 2 * quan::sqrt(quan::pow<2>(m_transducer_radius) + quan::pow<2>(m_sensor_height))},
   m_north_south_bias{0_us},
   m_east_west_bias{0_us},
   m_rise_time{100_us}
@@ -72,7 +69,7 @@ quan::velocity::m_per_s
 wind_sensor_t::solve_wind_velocity(  quan::time::us const & tF, quan::time::us const & tR)const
 {
    if ( (tF > 1_us) && ( tR > 1_us) ){
-      return ( m_flight_distance / (2 * m_cos_flight_angle) ) * ( 1 / tF - 1 / tR);
+      return m_transducer_radius * ( 1 / tF - 1 / tR);
    }else{
       return 0_m_per_s;
    }
@@ -104,7 +101,7 @@ wind_sensor_t::get_sound_velocity()
 
 quan::angle::deg get_wind_direction(quan::two_d::vect<quan::velocity::m_per_s> const & v)
 {
-   quan::angle::deg wind_direction  = quan::atan2(v.x,v.y);
+   quan::angle::deg const wind_direction  = quan::atan2(v.x,v.y);
 
    if ( wind_direction < 0_deg){
       wind_direction += 360_deg;
