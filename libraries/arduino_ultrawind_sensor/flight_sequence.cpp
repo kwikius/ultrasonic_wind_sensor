@@ -35,54 +35,85 @@ namespace {
 
    // id of the current flight
    volatile uint8_t current_flight = flight_north_south;
-   // raw flight capture values indexed by current flight
-   // as they are updated in irq
-   volatile uint16_t ll_flight_capture_values[4] = {0U};
 
-  // buffered user layer raw values
-   // valid when new_capture is true
-   volatile uint16_t flight_capture_values[4] = {0U};
+   /**
+    * Use 2 data buffers
+    * So irq can write new data while main can read the last data
+   **/
+   volatile uint16_t flight_capturesJ [4] = {0U};
+   volatile uint16_t flight_capturesK [4] = {0U};
+
+   volatile uint16_t * write_flight_captures = flight_capturesJ;
+   volatile uint16_t * read_flight_captures = flight_capturesK;
+
+   void swap_flight_capture_buffers()
+   {
+      volatile uint16_t * const temp = read_flight_captures;
+      read_flight_captures = write_flight_captures;
+      write_flight_captures = temp;
+   }
+   /** low level flag
+    * set by irq when new data is ready in read buffer
+    * cleared by main when read buffer has been read
+    * N.B assume read atomic write atomic
+    **/
    volatile bool new_capture = false;
 
 } // ~ namespace
 
-
-// get ref to latest captures or null if not yet available
-volatile uint16_t * get_captures()
+/** @brief get pointer to latest captures.
+ @ Called by main
+ * @return a pointer to the array of new capture values 
+ *  or nullptr if not yet available
+**/ 
+volatile uint16_t const * get_captures()
 {
-   bool new_capt = new_capture;
-   new_capture = false;
-   if ( new_capt){
-     return flight_capture_values;
+   if (new_capture){
+      return read_flight_captures;
    }else {
       return nullptr;
    }
 }
+
+/**
+  @brief called by main to signal it has read the contents of current read buffer 
+  and no longer needs it.
+  conditions
+  get_captures has returned the current read buffer rather than nullptr
+  N.B that get_captures is called only in get_ultrasound_capture
+**/
+void clear_capture()
+{
+   new_capture = false;
+}
+
 namespace {
-      // set up transmit address for current flight
+      // set up transmit address for current flight. Used by irq
    void set_transmit_address()
    {
       set_ultrasound_address(flight_transmit_address[current_flight]);
    }
 }
 
-// set up receive address for current flight
+// set up receive address for current flight. Used by irq
 void set_receive_address(){
    set_ultrasound_address(flight_receive_address[current_flight]);
 }
 
-// transfer prev values to user buffer if last was taken
+/**
+* Start next flight. used by irq
+* If end of sequence, start next sequence
+* if old data was taken, swap read and write buffers, 
+* else just overwrite last write data buffer
+* so no swapping of buffers to prevent corrupting read buffer
+* as main is possibly reading it 
+**/
 void start_next_flight()
 {
    current_flight = (current_flight + 1U ) % 4U;
-
-   if ( current_flight == 0U){
-      if ( new_capture == false){
-         for( uint8_t i  = 0; i < 4; ++i){
-            flight_capture_values[i] = ll_flight_capture_values[i];
-         }
-         new_capture = true;
-      }
+   if ( (current_flight == 0U) && (new_capture == false)){
+      swap_flight_capture_buffers();
+      new_capture = true;
    }
    set_transmit_address();
 }
@@ -93,7 +124,10 @@ namespace {
 }
 
 /** 
-   receive pulse capture
+   receive pulse capture interrupt
+   Read the capture data register
+   disable capture interrupt
+   and signal a new capture 
 **/
 ISR (TIMER1_CAPT_vect)
 {
@@ -104,7 +138,7 @@ ISR (TIMER1_CAPT_vect)
 
 namespace {
    /*
-    call from irq only
+    called from irq only
    */
    bool ll_get_capture(volatile uint16_t & result)
    {
@@ -117,16 +151,13 @@ namespace {
    }
 }
 /**
-* 
+* called from irq only. Either a valid capture s put into current write data slot
+or not valid, then set current write data slot value to 0
 **/
 void validate_capture()
 {
-    volatile uint16_t & target = ll_flight_capture_values[current_flight];
+    volatile uint16_t & target = write_flight_captures[current_flight];
     if (!ll_get_capture(target)){
        target = 0U;
     }
 }
-
-
-
-

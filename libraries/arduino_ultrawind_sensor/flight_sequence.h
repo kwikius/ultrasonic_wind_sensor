@@ -1,7 +1,7 @@
 #ifndef ULTRASOUND_FLIGHT_SEQUENCE_H_INCLUDED
 #define ULTRASOUND_FLIGHT_SEQUENCE_H_INCLUDED
 /*
-internal header
+n.b. internal header
 */
 /**
  * @brief set the transducer receive address to listen on after the pulse has been transmitted
@@ -20,9 +20,10 @@ void validate_capture();
 
 /**
 * @brief Get the newest set of captures if available 
-* @note function is destructive, If called again after any call, null will be retrned until next set of data.
 * @return A pointer to the latest entries if valid or null if not available yet
 **/
-volatile uint16_t * get_captures();
+volatile uint16_t const * get_captures();
+
+void clear_capture();
 
 #endif // ULTRASOUND_FLIGHT_SEQUENCE_H_INCLUDED

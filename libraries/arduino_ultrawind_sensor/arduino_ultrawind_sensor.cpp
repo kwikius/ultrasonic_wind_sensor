@@ -83,6 +83,10 @@ namespace {
    **/
    quan::time::us constexpr txSetupTime = txSetupCycles / systemClockFrequency;
 
+  /**
+   * @brief available time from start of ultrasound tx pulse to detect pulse
+   * at receiver transducer
+   **/ 
    quan::time::us constexpr rxCaptureTime = tim1Period - txSetupTime;
 
    /** IO setup
@@ -101,7 +105,7 @@ namespace {
    **/
 
    /**
-     4052 Addresses for driving the tx pulse and listening to rx pulses
+    * @brief set up 4052 Addresses for driving the tx pulse and listening to rx pulses
    **/
    void setupTransducerAddressPorts()
    {
@@ -110,6 +114,10 @@ namespace {
    }
 }
 
+/**
+* @brief set ultrasound address to addr
+  @param addr
+**/
 void set_ultrasound_address(uint8_t addr)
 {
    PORTC = (PORTC & ~(0b11 << 2U)) | ((addr & 0b11) << 2U);
@@ -204,7 +212,6 @@ namespace {
       TIM1state = TIM1mode::preTXpulse;
    }
 
-
 }// namespace
 
 void txPulseInitialSetup()
@@ -251,7 +258,6 @@ ISR (TIMER1_OVF_vect)
          TIFR1 = 0b00100111;
          break;
       default:
-       //  turn_on_builtin_led();
          break;
    }
 }
@@ -278,7 +284,6 @@ ISR (TIMER1_COMPB_vect)
          txPulseSetup();
          break;
       default:
-         turn_on_builtin_led();
          break;
    }
 
@@ -294,19 +299,14 @@ namespace {
 
 bool get_ultrasound_capture(quan::time::us (& result)[4])
 {
-   cli();
-   volatile uint16_t * captures = get_captures();
-   if ( captures == nullptr){
-     sei();
-     return false;
+   volatile uint16_t const * const captures = get_captures();
+   if ( captures != nullptr){
+      for ( uint32_t i = 0; i < 4 ;++i){
+         result[i] = convert_capture(captures[i]);
+      }
+      clear_capture();
+      return true;
+   }else{
+      return false;
    }
-   uint16_t local_captures[4];
-   for ( uint16_t i = 0; i < 4; ++i){
-      local_captures[i] = captures[i];
-   }
-   sei();
-   for ( uint32_t i = 0; i < 4 ;++i){
-      result[i] = convert_capture(local_captures[i]);
-   }
-   return true;
 }
