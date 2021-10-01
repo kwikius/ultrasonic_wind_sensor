@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:reversing_sensor_circuit-rescue
 LIBS:power
 LIBS:device
 LIBS:switches
@@ -48,9 +49,11 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L atmega328p U1
+L atmega328p-RESCUE-reversing_sensor_circuit U1
 U 1 1 61408799
 P 5650 3675
+AR Path="/61408799" Ref="U1"  Part="1" 
+AR Path="/61407FAF/61408799" Ref="U1"  Part="1" 
 F 0 "U1" H 5650 3375 60  0000 C CNN
 F 1 "atmega328p" H 5350 3025 60  0000 C CNN
 F 2 "" H 5200 3025 60  0001 C CNN
@@ -344,7 +347,7 @@ F 3 "" H 8375 4775 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Label 7575 3975 2    60   ~ 0
-SoftCompOut
+PosFeedback
 $Comp
 L R R13
 U 1 1 6141136B
@@ -568,12 +571,6 @@ Wire Wire Line
 Wire Wire Line
 	8400 950  8575 950 
 Connection ~ 8400 1525
-Wire Wire Line
-	9450 1625 9700 1625
-Wire Wire Line
-	9650 1625 9650 950 
-Wire Wire Line
-	9650 950  8875 950 
 Text Notes 8200 3550 0    60   ~ 0
 comparator electrical characteristics\ninput offset voltage @ 5V \n(conditions 0.4V < Vin <Vcc-0.5V)\n   typical 10 mV, max 40 mV\ninput leakage current           \n   min -50 nA max 50 nA\npropogation delay\n   500 ns
 $Comp
@@ -610,9 +607,6 @@ Wire Wire Line
 	7775 1525 7625 1525
 Wire Wire Line
 	7775 1725 7625 1725
-Text Label 9700 1625 0    60   ~ 0
-SoftCompOut
-Connection ~ 9650 1625
 Text Notes 9175 2175 0    60   ~ 0
 Atmega328p comparator \nequivalent circuit
 $Comp
@@ -641,4 +635,11 @@ F 3 "" H 9050 1225 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9050 1325 9050 1225
+Text Label 9100 950  0    60   ~ 0
+PosFeedback
+Wire Wire Line
+	8875 950  9100 950 
+NoConn ~ 9450 1625
+Text Notes 9650 1625 0    60   ~ 0
+Atmega328 only has \ninternal comp output
 $EndSCHEMATC

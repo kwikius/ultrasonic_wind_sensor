@@ -436,11 +436,11 @@ X VDD 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #
-# atmega328p
+# atmega328p-RESCUE-reversing_sensor_circuit
 #
-DEF atmega328p U 0 40 Y Y 1 F N
+DEF atmega328p-RESCUE-reversing_sensor_circuit U 0 40 Y Y 1 F N
 F0 "U" 0 -300 60 H V C CNN
-F1 "atmega328p" -300 -650 60 H V C CNN
+F1 "atmega328p-RESCUE-reversing_sensor_circuit" -300 -650 60 H V C CNN
 F2 "" -450 -650 60 H I C CNN
 F3 "" -450 -650 60 H I C CNN
 DRAW

@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:reversing_sensor_circuit-rescue
 LIBS:power
 LIBS:device
 LIBS:switches
