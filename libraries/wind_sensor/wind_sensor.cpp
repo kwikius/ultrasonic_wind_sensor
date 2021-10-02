@@ -101,7 +101,7 @@ wind_sensor_t::get_sound_velocity()
 
 quan::angle::deg get_wind_direction(quan::two_d::vect<quan::velocity::m_per_s> const & v)
 {
-   quan::angle::deg const wind_direction  = quan::atan2(v.x,v.y);
+   quan::angle::deg wind_direction  = quan::atan2(v.x,v.y);
 
    if ( wind_direction < 0_deg){
       wind_direction += 360_deg;
