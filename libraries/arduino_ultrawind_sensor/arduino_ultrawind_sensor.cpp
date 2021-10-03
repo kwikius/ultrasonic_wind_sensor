@@ -12,8 +12,20 @@
 // for showing output at human visible speed
 //#define UWS_SLOW_MOTION_DEBUG
 // TODO try using atmega328 comparator. Unfortunately it doesnt have an output
-// define to use external comparator rather than arduino one
+
+//######## Config ############
+// define to use external comparator rather than internal atmega328 one
 #define UWS_EXTERNAL_COMPARATOR
+
+#if !defined UWS_EXTERNAL_COMPARATOR
+// internal comparator using adc mux to change pins
+  #define MUX_COMP_INPUTS
+#endif
+
+#if defined (MUX_COMP_INPUTS) && defined(UWS_EXTERNAL_COMPARATOR)
+#error incompatible options
+#endif
+//############## Config ##############
 
 namespace {
    /**
@@ -96,10 +108,17 @@ namespace {
    if external comparator{
    RxDetect      ICP1     PB0      12       D8   
    }else{
-   ZeroCrossing1 AIN0     PD6      10       D6    ZeroCrossing via resistor hysteresis network
-   FilterGnd     AIN1     PD7      11       D7    Filter Gnd 
+    RxSignal AIN0     PD6      10       D6   positive input (Output from bandpass filter)
+    if MUX_COMP_INPUTS{
+     ZeroCrossingIn   ADC0  PC0    23  A0       neg input Filter Gnd
+     EnvelopeDetectIn   AIN1  AIN1     PD7      11       D7 neg input envelope
+    }else{
+      FilterGnd     AIN1     PD7      11       D7    Filter Gnd
+      CmpOut                 PD5       9       D5    software comparator output. N.B there is no actual hardware comp output
+    }
+ 
    }
-   CmpOut                 PD5       9       D5    software comparator output. N.B there is no actual hardware comp output
+   
    SenseDrive    OC1B     PB2      14       D10    Tim1 compare match A  
    Tras0   Out            PC2      25       A2    transducer address sel 0 
    Tras1   Out            PC3      26       A3    transducer address sel 1
@@ -189,7 +208,7 @@ namespace {
       TCCR1A |= (0b10 << COM1B0);
    
       // pulse starts at TIM1 overflow
-      // enable the pulse start interrupt
+      // enable the on pulse start interrupt
       TIMSK1 = (0b1 << TOIE1);
       // clear irq flags (N.B. write a 1 to bit to clear flag)
       TIFR1 = 0b00100111;
@@ -198,6 +217,7 @@ namespace {
 
 #if !defined (UWS_EXTERNAL_COMPARATOR)
 
+#if !defined (MUX_COMP_INPUTS)
 /**
  * @brief As atmega328p has no comp output so
  * we have to do it in software
@@ -211,7 +231,7 @@ namespace {
   {
     PORTD |= (0b1 << 5U);
   }
-
+#endif
   /**
     called at setup
     set up comparator
@@ -219,18 +239,35 @@ namespace {
   **/
   void comparatorSetup()
   {
+#if !defined (MUX_COMP_INPUTS)
      // make the software output PD5 low output
      PORTD &= ~(0b1 << 5U);
      DDRD  |= (0b1 << 5U);
+#endif
+
+#if defined (MUX_COMP_INPUTS)
+     // ADC must be off . N.B could do this in comparator irq
+     // so ADC could be available except during zero crossing?
+     ADCSRA &= ~(0b1 << ADEN);
+     // Sets AIN1 Envelope detect as comparator negative input
      // no multiplexing of comp negative input to adc pins
-     ADCSRA &= ~(0b1 << ACME);
+     ADCSRB &= ~(0b1 << ACME);
+     // set the adc address of bandpass filter gnd on ADC multiplexer
+     // to prepare mux to switch to it by setting ADCSRB.ACME
+     constexpr uint8_t  bandpass_filter_gnd_addr = 0U; //set pin to ADC0
+     ADMUX = (ADMUX & ~(0b1111 << MUX0)) | (bandpass_filter_gnd_addr << MUX0); 
+#endif
      // disable digital input on AIN1/0
      DIDR1 |= (0b11 << AIN0D);
+#if defined (MUX_COMP_INPUTS)
+     // disable digital input on ADC0
+     DIDR0 |= (0b1 << ADC0D);
+#endif
      // disable comparator interrupt for now
      ACSR &= ~(0b1 << ACIE) ;
-     // set comparator to interrupt on rising edge
+     // set comparator to interrupt on rising edge "envelope detect"
      ACSR |= (0b11 << ACIS0);
-     // set the comparator to trigger a capture on timr1
+     // set the comparator to trigger a capture on timr1 ( on falling edge)
      ACSR |= (0b1 << ACIC);
      //clear Timer1 irq flags after switching timr1 capture source as per manual
      TIFR1 = (0b1 << ICF1);
@@ -263,8 +300,7 @@ void txPulseInitialSetup()
 #if !defined (UWS_EXTERNAL_COMPARATOR)
         comparatorSetup();
 #endif
-        
-       enableTIM1();  // to start
+      enableTIM1();  // to start
    }
    sei();
 }
@@ -286,20 +322,24 @@ ISR (TIMER1_OVF_vect)
       case TIM1mode::inTXpulseSettlingDelay: // start of rx capture period
          TIM1state = TIM1mode::inRXcapture;
 #if !defined (UWS_EXTERNAL_COMPARATOR)
-/**
-   for internal comparator, clear positive feedback 
-   and enable the comparator interrupt on rising edge
-   as well as the end of capture interrupt
-**/
-         // enable end of capture irq
+     // using internal comparator
+#if defined (MUX_COMP_INPUTS)
+   // using adc multiplexer
+         // TODO : here turn off A2D if necessary
+         // Set AIN1 Envelope detect as comparator negative input 
+         ADCSRB &= ~(0b1 << ACME);
+#endif
+         // enable end of capture irq in case there is
+         // no receive pulse detected in the allocated time
          TIMSK1 = (1U << OCIE1B) ;
          //clear  Tim1 irq flags
          TIFR1 = 0b00100111;
-         // enable comparator interrupt on rising edge
-         ACSR  |= (0b1 << ACIE);
-         // clear comparator interrupt flag
+         // enable comparator interrupt on rising edge envelope detect
+         ACSR |= (0b1 << ACIE);
+         // clear junk from comparator interrupt flag
          ACSR  &= ~(0b1 << ACI) ;
-#else
+#else  
+  // external comparator
          // enable Capture irq and end of capture irq
          TIMSK1 = (1U << ICIE1 ) | (1U << OCIE1B) ;
          //clear  irq flags
@@ -313,9 +353,13 @@ ISR (TIMER1_OVF_vect)
 
 #if !defined (UWS_EXTERNAL_COMPARATOR)
 /**
- analog comparator rising edge envelope detected.
-  Use comparator interrupt to flip the software impl 
-  of comparator output high ready for zero crossing.
+ Analog comparator rising edge envelope detected interrupt.
+  if not using multiplex option, use comparator interrupt 
+  to flip the software impl of comparator output high ready
+  to detect zero crossing by falling edge.
+  If using multiplex option, switch the negative comparator input
+  to the 40 kHz bandpass filter ground, ready to detect zero crossing
+  by falling edge
 
 The comparator characteristics are given in the atmel/avr datasheet
 8271G–AVR–02/2013 
@@ -332,41 +376,52 @@ propogation delay
 
 From envelope detect there is min of 1/4 of a cycle of 40 kHz receiver 
 waveform before next zero crossing. This means a minimum of 6.25 usec 
-between envelope-detect and the zero-crossing-capture. The current mode 
-is listening for the receiver pulse, so there are no other interrupts to 
+between envelope-detect ( not including mcus propogations delays)
+and the zero-crossing-capture. The mode at time of interrupt is 
+listening for the receiver pulse, so there are no other interrupts to 
 get in the way ( except the end of rx capture interrupt, which, if it 
-occurs first, indicates there was no pulse received in the time, so not a
-problem).
+occurs first, indicates there was no pulse received in the time, so not 
+a problem).
 
 interrupt response time
 from 8271G–AVR–02/2013  7.7.1
 
-longest instruction length is 4 cycles ( e.g CALL, RET) which will finish before irq starts
-4 cycles to enter irq
-3 cycles for jump vector
-Total then 11 cycles so 0.75 usec < 1.0 usec
+longest instruction length is 4 cycles ( e.g CALL, RET) which will finish 
+before irq starts.
+4 cycles to enter irq.
+3 cycles for jump vector.
+Total then 11 cycles so 0.75 usec < 1.0 usec.
 
-Allowing 1 usec for the output to settle after it has been changed, still allows 4.5 usec before the
-zero crossing pulse, so should be ok!
+Allowing 1 usec for the output to settle after it has been changed, still 
+allows 4.5 usec before the zero crossing pulse, so should be ok!
 **/
 ISR (ANALOG_COMP_vect)
 {
+
+#if !defined (MUX_COMP_INPUTS)
   // Set the positive feedback output pin high ASAP.
   // Note there is a possibility the output will have gone 
   // low and will pulse high again so flags may be set.
    setSoftCompOutput();  // < 1 usec from envelope detect on comp +ve input
-
-   // disable comparator interrupt
+#else
+   // Set ADC0 (filter GND) as comparator negative input
+   // by enabling adc multiplexer comparator mode
+   ADCSRB |= (0b1 << ACME);
+#endif
+   // disable comparator interrupt,
    ACSR &= ~(0b1 << ACIE) ; // assume CBI  2 cycles
    // enable the TIM1 capture interrupt, to capture  
-   // receiver 40 kHz waveform zero crossing.
+   // receiver 40 kHz waveform zero crossing very soon!
    TIMSK1 = (0b1 << ICIE1 );  // assume LDI 1 cycle
 
    // Delay for the positive feedback output to change. 
    // Allow 1 usec according  to spec cited above 
-   // (allows 0.5usec extra for if the resistor network 
+   // (allows 0.5 usec extra for if the resistor network 
    // has high values of resistance and capacitance).
-
+#if defined (MUX_COMP_INPUTS)
+   // TBH maybe this could be less in multiplex comparator mode?
+   // No outputs need switching, just internal multiplexer
+#endif
    constexpr auto delay_time = 1.0_us;
    // cycles already used for the above instructions
    constexpr auto used_cycles = 3U;
@@ -395,23 +450,25 @@ ISR (TIMER1_COMPB_vect)
          setOCR1B(rxCaptureTime);
          setOCR1A(rxCaptureTime + txSetupTime);
          TIM1state = TIM1mode::inTXpulseSettlingDelay;
+         // enable TIM1 timer overflow interrupt
          TIMSK1 = (0b1 << TOIE1);
+         // clear timr1 interrupt flags
          TIFR1 = 0b00100111;
          break;
       case TIM1mode::inRXcapture: // end of rxCapture period
          // get capture if any...
          validate_capture();
          // set up for next cycle
-         #if !defined (UWS_EXTERNAL_COMPARATOR)
+         #if !defined (UWS_EXTERNAL_COMPARATOR) && !defined (MUX_COMP_INPUTS)
             // end of cycle, so reset software driven comparator output low
             clearSoftCompOutput();
          #endif
          txPulseSetup();
          break;
       default:
+         // shouldnt get here!
          break;
    }
-
 }
 
 namespace {
