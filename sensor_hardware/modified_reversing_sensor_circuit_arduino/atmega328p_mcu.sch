@@ -303,9 +303,9 @@ F 3 "" H 4150 5650 50  0001 C CNN
 	1    4150 5650
 	1    0    0    -1  
 $EndComp
-Text HLabel 7650 4175 2    60   Input ~ 0
+Text HLabel 6925 2575 2    60   Input ~ 0
 RxSignalGnd
-Text HLabel 9000 4075 2    60   Input ~ 0
+Text HLabel 6950 4075 2    60   Input ~ 0
 RxSignal
 Text HLabel 6975 2775 2    60   Output ~ 0
 Address0
@@ -313,52 +313,6 @@ Text HLabel 6975 2875 2    60   Output ~ 0
 Address1
 Text HLabel 7100 4575 2    60   Output ~ 0
 SenseDrive
-$Comp
-L R R29
-U 1 1 61410EA7
-P 8775 4075
-F 0 "R29" V 8855 4075 50  0000 C CNN
-F 1 "10K" V 8775 4075 50  0000 C CNN
-F 2 "" V 8705 4075 50  0001 C CNN
-F 3 "" H 8775 4075 50  0001 C CNN
-	1    8775 4075
-	0    1    1    0   
-$EndComp
-$Comp
-L R R25
-U 1 1 6141103E
-P 8375 4500
-F 0 "R25" V 8455 4500 50  0000 C CNN
-F 1 "100K" V 8375 4500 50  0000 C CNN
-F 2 "" V 8305 4500 50  0001 C CNN
-F 3 "" H 8375 4500 50  0001 C CNN
-	1    8375 4500
-	1    0    0    -1  
-$EndComp
-$Comp
-L GND #PWR36
-U 1 1 614111BE
-P 8375 4775
-F 0 "#PWR36" H 8375 4525 50  0001 C CNN
-F 1 "GND" H 8375 4625 50  0000 C CNN
-F 2 "" H 8375 4775 50  0001 C CNN
-F 3 "" H 8375 4775 50  0001 C CNN
-	1    8375 4775
-	1    0    0    -1  
-$EndComp
-Text Label 7575 3975 2    60   ~ 0
-PosFeedback
-$Comp
-L R R13
-U 1 1 6141136B
-P 7850 3975
-F 0 "R13" V 7775 3975 50  0000 C CNN
-F 1 "100K" V 7850 3975 50  0000 C CNN
-F 2 "" V 7780 3975 50  0001 C CNN
-F 3 "" H 7850 3975 50  0001 C CNN
-	1    7850 3975
-	0    1    1    0   
-$EndComp
 Text Label 2800 2525 2    60   ~ 0
 DTR
 Text Label 3650 5475 0    60   ~ 0
@@ -371,54 +325,14 @@ Text Label 6950 3475 0    60   ~ 0
 RXI
 Text Label 6975 3575 0    60   ~ 0
 TXO
-$Comp
-L LM339 U4
-U 1 1 61471F8D
-P 9150 1625
-F 0 "U4" H 9150 1825 50  0000 L CNN
-F 1 "LM339" H 9150 1425 50  0000 L CNN
-F 2 "" H 9100 1725 50  0001 C CNN
-F 3 "" H 9200 1825 50  0001 C CNN
-	1    9150 1625
-	1    0    0    -1  
-$EndComp
-$Comp
-L R R18
-U 1 1 61472016
-P 7925 1525
-F 0 "R18" V 8005 1525 50  0000 C CNN
-F 1 "10K" V 7925 1525 50  0000 C CNN
-F 2 "" V 7855 1525 50  0001 C CNN
-F 3 "" H 7925 1525 50  0001 C CNN
-	1    7925 1525
-	0    1    1    0   
-$EndComp
-$Comp
-L R R24
-U 1 1 61472217
-P 8250 2025
-F 0 "R24" V 8330 2025 50  0000 C CNN
-F 1 "100K" V 8250 2025 50  0000 C CNN
-F 2 "" V 8180 2025 50  0001 C CNN
-F 3 "" H 8250 2025 50  0001 C CNN
-	1    8250 2025
-	1    0    0    -1  
-$EndComp
-$Comp
-L GND #PWR35
-U 1 1 6147239E
-P 8250 2275
-F 0 "#PWR35" H 8250 2025 50  0001 C CNN
-F 1 "GND" H 8250 2125 50  0000 C CNN
-F 2 "" H 8250 2275 50  0001 C CNN
-F 3 "" H 8250 2275 50  0001 C CNN
-	1    8250 2275
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4350 2975 4650 2975
 Wire Wire Line
-	4350 2175 4350 2975
+	4350 2175 4350 2775
+Wire Wire Line
+	4350 2775 4350 2875
+Wire Wire Line
+	4350 2875 4350 2975
 Wire Wire Line
 	4650 2775 4350 2775
 Connection ~ 4350 2775
@@ -428,7 +342,11 @@ Connection ~ 4350 2875
 Wire Wire Line
 	4650 4575 4550 4575
 Wire Wire Line
-	4550 4575 4550 4875
+	4550 4575 4550 4675
+Wire Wire Line
+	4550 4675 4550 4775
+Wire Wire Line
+	4550 4775 4550 4875
 Wire Wire Line
 	4650 4675 4550 4675
 Connection ~ 4550 4675
@@ -460,7 +378,11 @@ Wire Wire Line
 Wire Wire Line
 	3500 2150 3500 2050
 Wire Wire Line
-	3500 2450 3500 2675
+	3500 2450 3500 2525
+Wire Wire Line
+	3500 2525 3500 2575
+Wire Wire Line
+	3500 2575 3500 2675
 Wire Wire Line
 	3500 3200 3500 3075
 Wire Wire Line
@@ -470,9 +392,13 @@ Wire Wire Line
 	3500 2525 3225 2525
 Connection ~ 3500 2525
 Wire Wire Line
-	2850 4375 2850 4550
+	2850 4375 2850 4475
 Wire Wire Line
-	2850 3875 2850 4075
+	2850 4475 2850 4550
+Wire Wire Line
+	2850 3875 2850 3975
+Wire Wire Line
+	2850 3975 2850 4075
 Wire Wire Line
 	6750 4875 6825 4875
 Wire Wire Line
@@ -484,7 +410,9 @@ Wire Wire Line
 Wire Wire Line
 	2925 2525 2800 2525
 Wire Wire Line
-	2850 4475 3425 4475
+	2850 4475 3150 4475
+Wire Wire Line
+	3150 4475 3425 4475
 Wire Wire Line
 	3425 4475 3425 4375
 Connection ~ 2850 4475
@@ -492,7 +420,9 @@ Wire Wire Line
 	3150 4350 3150 4475
 Connection ~ 3150 4475
 Wire Wire Line
-	2850 3975 3425 3975
+	2850 3975 3150 3975
+Wire Wire Line
+	3150 3975 3425 3975
 Wire Wire Line
 	3425 3975 3425 4075
 Connection ~ 2850 3975
@@ -502,7 +432,9 @@ Connection ~ 3150 3975
 Wire Wire Line
 	3550 5875 3650 5875
 Wire Wire Line
-	3650 5875 3650 6075
+	3650 5875 3650 6000
+Wire Wire Line
+	3650 6000 3650 6075
 Wire Wire Line
 	3550 5975 3650 5975
 Wire Wire Line
@@ -527,119 +459,95 @@ Wire Wire Line
 Wire Wire Line
 	6750 4575 7100 4575
 Wire Wire Line
-	9000 4075 8925 4075
-Wire Wire Line
-	6750 4075 8625 4075
-Wire Wire Line
-	8375 4350 8375 4075
-Connection ~ 8375 4075
-Wire Wire Line
-	8375 4775 8375 4650
-Wire Wire Line
-	7700 3975 6750 3975
-Wire Wire Line
-	8000 3975 8325 3975
-Wire Wire Line
-	8325 3975 8325 4075
-Connection ~ 8325 4075
-Wire Wire Line
 	6950 3475 6750 3475
 Wire Wire Line
 	6975 3575 6750 3575
-Wire Wire Line
-	8250 2275 8250 2175
-Wire Wire Line
-	8850 1725 8075 1725
-Wire Wire Line
-	8075 1525 8850 1525
-Wire Wire Line
-	8250 1875 8250 1525
-Connection ~ 8250 1525
-$Comp
-L R R28
-U 1 1 6147292B
-P 8725 950
-F 0 "R28" V 8805 950 50  0000 C CNN
-F 1 "100K" V 8725 950 50  0000 C CNN
-F 2 "" V 8655 950 50  0001 C CNN
-F 3 "" H 8725 950 50  0001 C CNN
-	1    8725 950 
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	8400 1525 8400 950 
-Wire Wire Line
-	8400 950  8575 950 
-Connection ~ 8400 1525
-Text Notes 8200 3550 0    60   ~ 0
+Text Notes 8500 2525 0    60   ~ 0
 comparator electrical characteristics\ninput offset voltage @ 5V \n(conditions 0.4V < Vin <Vcc-0.5V)\n   typical 10 mV, max 40 mV\ninput leakage current           \n   min -50 nA max 50 nA\npropogation delay\n   500 ns
+Wire Wire Line
+	6950 4075 6750 4075
 $Comp
-L R R12
-U 1 1 61472EC2
-P 7350 4175
-F 0 "R12" V 7430 4175 50  0000 C CNN
-F 1 "8K2" V 7350 4175 50  0000 C CNN
-F 2 "" V 7280 4175 50  0001 C CNN
-F 3 "" H 7350 4175 50  0001 C CNN
-	1    7350 4175
-	0    1    1    0   
+L R R?
+U 1 1 615887BF
+P 8500 3875
+F 0 "R?" V 8580 3875 50  0000 C CNN
+F 1 "22K" V 8500 3875 50  0000 C CNN
+F 2 "" V 8430 3875 50  0001 C CNN
+F 3 "" H 8500 3875 50  0001 C CNN
+	1    8500 3875
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 61588808
+P 8500 4400
+F 0 "R?" V 8580 4400 50  0000 C CNN
+F 1 "33K" V 8500 4400 50  0000 C CNN
+F 2 "" V 8430 4400 50  0001 C CNN
+F 3 "" H 8500 4400 50  0001 C CNN
+	1    8500 4400
+	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6750 4175 7200 4175
+	8500 4025 8500 4175
 Wire Wire Line
-	7650 4175 7500 4175
-$Comp
-L R R21
-U 1 1 614734EA
-P 7925 1725
-F 0 "R21" V 8005 1725 50  0000 C CNN
-F 1 "8K2" V 7925 1725 50  0000 C CNN
-F 2 "" V 7855 1725 50  0001 C CNN
-F 3 "" H 7925 1725 50  0001 C CNN
-	1    7925 1725
-	0    1    1    0   
-$EndComp
-Text HLabel 7625 1525 0    60   Input ~ 0
-RxSignal
-Text HLabel 7625 1725 0    60   Input ~ 0
-RxSignalGnd
-Wire Wire Line
-	7775 1525 7625 1525
-Wire Wire Line
-	7775 1725 7625 1725
-Text Notes 9175 2175 0    60   ~ 0
-Atmega328p comparator \nequivalent circuit
+	8500 4175 8500 4250
 $Comp
 L GND #PWR?
-U 1 1 61475640
-P 9050 2050
-F 0 "#PWR?" H 9050 1800 50  0001 C CNN
-F 1 "GND" H 9050 1900 50  0000 C CNN
-F 2 "" H 9050 2050 50  0001 C CNN
-F 3 "" H 9050 2050 50  0001 C CNN
-	1    9050 2050
+U 1 1 61588961
+P 8500 4925
+F 0 "#PWR?" H 8500 4675 50  0001 C CNN
+F 1 "GND" H 8500 4775 50  0000 C CNN
+F 2 "" H 8500 4925 50  0001 C CNN
+F 3 "" H 8500 4925 50  0001 C CNN
+	1    8500 4925
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9050 2050 9050 1925
+	8500 4925 8500 4800
+Wire Wire Line
+	8500 4800 8500 4550
 $Comp
 L VCC #PWR?
-U 1 1 6147580B
-P 9050 1225
-F 0 "#PWR?" H 9050 1075 50  0001 C CNN
-F 1 "VCC" H 9050 1375 50  0000 C CNN
-F 2 "" H 9050 1225 50  0001 C CNN
-F 3 "" H 9050 1225 50  0001 C CNN
-	1    9050 1225
+U 1 1 61588A47
+P 8500 3650
+F 0 "#PWR?" H 8500 3500 50  0001 C CNN
+F 1 "VCC" H 8500 3800 50  0000 C CNN
+F 2 "" H 8500 3650 50  0001 C CNN
+F 3 "" H 8500 3650 50  0001 C CNN
+	1    8500 3650
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9050 1325 9050 1225
-Text Label 9100 950  0    60   ~ 0
-PosFeedback
+	8500 3725 8500 3650
+Text Notes 8625 4150 0    60   ~ 0
+3V
 Wire Wire Line
-	8875 950  9100 950 
-NoConn ~ 9450 1625
-Text Notes 9650 1625 0    60   ~ 0
-Atmega328 only has \ninternal comp output
+	6925 2575 6750 2575
+Wire Wire Line
+	6750 4175 8200 4175
+Wire Wire Line
+	8200 4175 8500 4175
+Connection ~ 8500 4175
+Text Label 7450 4175 0    60   ~ 0
+EnvelopeDetect
+$Comp
+L C C?
+U 1 1 6158A0FC
+P 8200 4450
+F 0 "C?" H 8225 4550 50  0000 L CNN
+F 1 "C" H 8225 4350 50  0000 L CNN
+F 2 "" H 8238 4300 50  0001 C CNN
+F 3 "" H 8200 4450 50  0001 C CNN
+	1    8200 4450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8200 4600 8200 4800
+Wire Wire Line
+	8200 4800 8500 4800
+Connection ~ 8500 4800
+Wire Wire Line
+	8200 4300 8200 4175
+Connection ~ 8200 4175
 $EndSCHEMATC
