@@ -15,7 +15,7 @@
 
 //######## Config ############
 // define to use external comparator rather than internal atmega328 one
-#define UWS_EXTERNAL_COMPARATOR
+//#define UWS_EXTERNAL_COMPARATOR
 
 #if !defined UWS_EXTERNAL_COMPARATOR
 // internal comparator using adc mux to change pins
@@ -341,8 +341,7 @@ ISR (TIMER1_OVF_vect)
 #else  
   // external comparator
          // enable Capture irq and end of capture irq
-         TIMSK1 = (1U << ICIE1 ) | (1U << OCIE1B) ;
-         //clear  irq flags
+         TIMSK1 = (1U << ICIE1 ) | (1U << OCIE1B) ;         //clear  irq flags
          TIFR1 = 0b00100111;
 #endif
          break;
@@ -395,6 +394,10 @@ Total then 11 cycles so 0.75 usec < 1.0 usec.
 Allowing 1 usec for the output to settle after it has been changed, still 
 allows 4.5 usec before the zero crossing pulse, so should be ok!
 **/
+
+namespace {
+  int irqcount = 0;
+}
 ISR (ANALOG_COMP_vect)
 {
 
@@ -404,15 +407,18 @@ ISR (ANALOG_COMP_vect)
   // low and will pulse high again so flags may be set.
    setSoftCompOutput();  // < 1 usec from envelope detect on comp +ve input
 #else
+
    // Set ADC0 (filter GND) as comparator negative input
    // by enabling adc multiplexer comparator mode
    ADCSRB |= (0b1 << ACME);
+
 #endif
    // disable comparator interrupt,
    ACSR &= ~(0b1 << ACIE) ; // assume CBI  2 cycles
    // enable the TIM1 capture interrupt, to capture  
    // receiver 40 kHz waveform zero crossing very soon!
-   TIMSK1 = (0b1 << ICIE1 );  // assume LDI 1 cycle
+ //  TIMSK1 = (0b1 << ICIE1 );  // assume LDI 1 cycle
+   TIMSK1 = (1U << ICIE1 ) | (1U << OCIE1B) ;
 
    // Delay for the positive feedback output to change. 
    // Allow 1 usec according  to spec cited above 
@@ -424,7 +430,16 @@ ISR (ANALOG_COMP_vect)
 #endif
    constexpr auto delay_time = 1.0_us;
    // cycles already used for the above instructions
+#if 0
+   // for led turn on
+   constexpr auto used_cycles = 5U;
+ // if ( ++irqcount == 1000){
+   complement_builtin_led();
+ //  irqcount = 0;
+//  }
+#else
    constexpr auto used_cycles = 3U;
+#endif
 
    __builtin_avr_delay_cycles(delay_time * systemClockFrequency - used_cycles); 
 
@@ -458,6 +473,7 @@ ISR (TIMER1_COMPB_vect)
       case TIM1mode::inRXcapture: // end of rxCapture period
          // get capture if any...
          validate_capture();
+
          // set up for next cycle
          #if !defined (UWS_EXTERNAL_COMPARATOR) && !defined (MUX_COMP_INPUTS)
             // end of cycle, so reset software driven comparator output low

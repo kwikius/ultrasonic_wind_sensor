@@ -30,6 +30,8 @@ void setup()
 
    windSensor.init();
 
+   Serial.println("wind sensor initialised");
+
 }
 
 namespace {
@@ -81,9 +83,9 @@ void loop()
     windSensor.update();
 
     // uncomment for simple text output to serial
-    //readWindSensor();
+    readWindSensor();
 
     // framed packet protocol
-    sendWindSensor();
+    //sendWindSensor();
 }
 

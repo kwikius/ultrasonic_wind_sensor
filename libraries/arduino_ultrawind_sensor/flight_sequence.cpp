@@ -1,5 +1,6 @@
 
 #include <Arduino.h>
+#include <builtin_led.h>
 
 void set_ultrasound_address(uint8_t addr);
 
@@ -129,11 +130,19 @@ namespace {
    disable capture interrupt
    and signal a new capture 
 **/
+
+namespace {
+  volatile int irqcount = 0;
+}
 ISR (TIMER1_CAPT_vect)
 {
    ll_capture_value = ICR1;
    TIMSK1 &= ~(1U << ICIE1 );
    ll_new_capture_value = true;
+   if (++irqcount == 1000){
+    complement_builtin_led();
+    irqcount = 0;
+   }
 }
 
 namespace {
