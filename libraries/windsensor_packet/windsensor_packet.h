@@ -49,4 +49,23 @@
 static_assert ( sizeof (velocity_and_direction_packet) == 16,"unexpected union size");
 static_assert ( (sizeof (velocity_and_direction_packet) % 4) == 0,"unexpected union size");
 
+// send packet using zapp4 protocol
+   template <typename Packet>
+   inline void send_packet( Packet const & packet)
+   {
+      uint8_t encoded[quan::uav::cobs::get_encoded_length<sizeof(packet)>()];
+      quan::uav::cobs::encode (packet.ar,sizeof(packet),encoded);
+
+      Serial.write('\0'); // frame
+      Serial.write(reinterpret_cast<char*>(encoded),sizeof(encoded));
+      Serial.write('\0'); // frame
+   }
+
+   template <typename Packet, typename... ValueTypes>
+   inline void send_packet( ValueTypes const &... values )
+   {
+      Packet packet{values...};
+      send_packet(packet);
+   }
+
 #endif // WINDSENSOR_WIND_SENSOR_PACKET_HPP_INCLUDED

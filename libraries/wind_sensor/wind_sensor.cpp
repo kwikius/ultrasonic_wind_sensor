@@ -21,6 +21,12 @@ wind_sensor_t::wind_sensor_t(quan::length::mm const & transducer_radius_in,quan:
 
 void wind_sensor_t::init()
 {
+   txPulseInitialSetup();
+
+   // TODO set in eeprom
+   this->setNorthSouthBias(0_us);
+   this->setEastWestBias(0_us);
+
    quan::time::us results [4] = {0_us};
    //ignore first
    while ( !get_ultrasound_capture(results)) { asm volatile ("nop":::);}
