@@ -11,7 +11,6 @@
 
 // for showing output at human visible speed
 //#define UWS_SLOW_MOTION_DEBUG
-// TODO try using atmega328 comparator. Unfortunately it doesnt have an output
 
 //######## Config ############
 // define to use external comparator rather than internal atmega328 one
@@ -19,6 +18,7 @@
 
 #if !defined UWS_EXTERNAL_COMPARATOR
 // internal comparator using adc mux to change pins
+// n.b alternative using soft output not tested
   #define MUX_COMP_INPUTS
 #endif
 
@@ -44,7 +44,7 @@ namespace {
 
    /**
    * Using the quan library, we can declare a strong C++ type 
-   * representing for the system clock as a frequency.
+   * representing for example the system clock as a frequency.
    * Constexpr means it is a compile time constant,
    * therefore there is no runtime overhead
    **/
@@ -346,6 +346,7 @@ ISR (TIMER1_OVF_vect)
 #endif
          break;
       default:
+         // shouldnt get here!
          break;
    }
 }
@@ -395,9 +396,6 @@ Allowing 1 usec for the output to settle after it has been changed, still
 allows 4.5 usec before the zero crossing pulse, so should be ok!
 **/
 
-namespace {
-  int irqcount = 0;
-}
 ISR (ANALOG_COMP_vect)
 {
 
@@ -407,11 +405,9 @@ ISR (ANALOG_COMP_vect)
   // low and will pulse high again so flags may be set.
    setSoftCompOutput();  // < 1 usec from envelope detect on comp +ve input
 #else
-
    // Set ADC0 (filter GND) as comparator negative input
    // by enabling adc multiplexer comparator mode
    ADCSRB |= (0b1 << ACME);
-
 #endif
    // disable comparator interrupt,
    ACSR &= ~(0b1 << ACIE) ; // assume CBI  2 cycles
@@ -431,12 +427,9 @@ ISR (ANALOG_COMP_vect)
    constexpr auto delay_time = 1.0_us;
    // cycles already used for the above instructions
 #if 0
-   // for led turn on
+   // for led turn on for debugging
    constexpr auto used_cycles = 5U;
- // if ( ++irqcount == 1000){
    complement_builtin_led();
- //  irqcount = 0;
-//  }
 #else
    constexpr auto used_cycles = 3U;
 #endif
@@ -445,14 +438,14 @@ ISR (ANALOG_COMP_vect)
 
   // Assume the comparator output has settled ( high)  after delay,
 //###########################################################
-// TODO we could check the ACSR.ACO bit to see the 
+// TODO: We could check the ACSR.ACO bit to see the 
  // comparator output state and set error flag if not high here?
 //############################################################
    // so clear the TIM1 input capture flag, which may have 
    // pulsed before the positive feedback took effect.
    TIFR1 = (0b1 << ICF1); // < 2 usec from envelope detect on comp +ve input
 }
-#endif
+#endif  // internal comparator
 
 ISR (TIMER1_COMPB_vect)
 {
@@ -489,10 +482,16 @@ ISR (TIMER1_COMPB_vect)
 
 namespace {
 
+/**
+* @brief convert the timer value into a time in microseconds
+* @param[in] capture_value The raw timer value
+* @return the vlaue converted to microseconds
+**/
    quan::time::us convert_capture(uint16_t capture_value)
    {
       return capture_value / systemClockFrequency + txSettlingDelay;
    }
+
 }
 
 /**

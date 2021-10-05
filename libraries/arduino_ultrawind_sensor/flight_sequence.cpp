@@ -132,23 +132,31 @@ namespace {
 **/
 
 namespace {
-  volatile int irqcount = 0;
+  /// @brief counter for led blink to show things are working ok
+  volatile uint16_t irqcount = 0;
 }
+
 ISR (TIMER1_CAPT_vect)
 {
    ll_capture_value = ICR1;
    TIMSK1 &= ~(1U << ICIE1 );
    ll_new_capture_value = true;
-   if (++irqcount == 1000){
-    complement_builtin_led();
-    irqcount = 0;
+
+  // show we are doing something|
+  // blink at roughly 1 Hz if things are working correctly
+   if (++irqcount == 250U){
+      complement_builtin_led();
+      irqcount = 0U;
    }
 }
 
 namespace {
-   /*
-    called from irq only
-   */
+   /**
+    @brief called from irq only.
+    @param[out] result one new capture value, its is copied to result
+    @return true if there is a new capture value in result
+    else false and no sid-effects
+   **/
    bool ll_get_capture(volatile uint16_t & result)
    {
       bool const new_capt = ll_new_capture_value;
