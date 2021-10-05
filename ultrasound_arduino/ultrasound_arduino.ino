@@ -83,9 +83,9 @@ void loop()
     windSensor.update();
 
     // uncomment for simple text output to serial
-    readWindSensor();
+    //readWindSensor();
 
     // framed packet protocol
-    //sendWindSensor();
+    sendWindSensor();
 }
 
