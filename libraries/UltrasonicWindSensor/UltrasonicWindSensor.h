@@ -11,9 +11,9 @@
 quan::velocity::m_per_s get_wind_speed(quan::two_d::vect<quan::velocity::m_per_s> const & v);
 quan::angle::deg get_wind_direction(quan::two_d::vect<quan::velocity::m_per_s> const & v);
 
-struct wind_sensor_t{
+struct UltrasonicWindSensor{
 
-   wind_sensor_t(quan::length::mm const & transducer_radius_in,quan::length::mm sensor_height_in);
+   UltrasonicWindSensor(quan::length::mm const & transducer_radius_in,quan::length::mm sensor_height_in);
 
    void init();
 

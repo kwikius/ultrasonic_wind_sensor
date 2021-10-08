@@ -1,6 +1,7 @@
 
+
+#include <UltrasonicWindSensor.h>
 #include <builtin_led.h>
-#include <wind_sensor.h>
 #include <windsensor_packet.h>
 #include <polled_serial.h>
 
@@ -10,7 +11,7 @@ namespace {
   QUAN_QUANTITY_LITERAL( length,mm)
 
   //instantiate the wind sensor class
-  wind_sensor_t windSensor{150_mm,250_mm};
+  UltrasonicWindSensor windSensor{150_mm,250_mm};
 }
 
 /** ###################################################################################

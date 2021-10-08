@@ -1,7 +1,7 @@
 
-#include "wind_sensor.h"
+#include "UltrasonicWindSensor.h"
 #include <quan/atan2.hpp>
-#include <arduino_ultrawind_sensor.h>
+#include "wind_sensor_impl.h"
 
 namespace {
 
@@ -11,7 +11,7 @@ namespace {
    QUAN_QUANTITY_LITERAL(angle,deg)
 }
 
-wind_sensor_t::wind_sensor_t(quan::length::mm const & transducer_radius_in,quan::length::mm sensor_height_in)
+UltrasonicWindSensor::UltrasonicWindSensor(quan::length::mm const & transducer_radius_in,quan::length::mm sensor_height_in)
 : m_transducer_radius{transducer_radius_in},
   m_sensor_height{sensor_height_in},
   m_north_south_bias{0_us},
@@ -19,7 +19,7 @@ wind_sensor_t::wind_sensor_t(quan::length::mm const & transducer_radius_in,quan:
   m_rise_time{100_us}
 {}
 
-void wind_sensor_t::init()
+void UltrasonicWindSensor::init()
 {
    txPulseInitialSetup();
 
@@ -42,7 +42,7 @@ void wind_sensor_t::init()
    // TODO: initial estimate_uncertainty = measurement_uncertainty
 }
 
-void wind_sensor_t::update()
+void UltrasonicWindSensor::update()
 {
    wind_speed_vect_t const prediction = m_estimate;
 
@@ -60,19 +60,19 @@ void wind_sensor_t::update()
 }
 
 quan::velocity::m_per_s 
-wind_sensor_t::getWindSpeed()const
+UltrasonicWindSensor::getWindSpeed()const
 {
    return ::get_wind_speed(m_estimate);
 }
 
 quan::angle::deg 
-wind_sensor_t::getWindDirection() const
+UltrasonicWindSensor::getWindDirection() const
 {
    return ::get_wind_direction(m_estimate);
 }
 
 quan::velocity::m_per_s 
-wind_sensor_t::solve_wind_velocity(  quan::time::us const & tF, quan::time::us const & tR)const
+UltrasonicWindSensor::solve_wind_velocity(  quan::time::us const & tF, quan::time::us const & tR)const
 {
    if ( (tF > 1_us) && ( tR > 1_us) ){
       return m_transducer_radius * ( 1 / tF - 1 / tR);
@@ -82,7 +82,7 @@ wind_sensor_t::solve_wind_velocity(  quan::time::us const & tF, quan::time::us c
 }
 
 quan::velocity::m_per_s 
-wind_sensor_t::solve_wind_velocity_north_south(quan::time::us const * results) const
+UltrasonicWindSensor::solve_wind_velocity_north_south(quan::time::us const * results) const
 {
    auto const tF = results[0] - (m_rise_time + m_north_south_bias/2);
    auto const tR = results[1] - (m_rise_time - m_north_south_bias/2);
@@ -91,7 +91,7 @@ wind_sensor_t::solve_wind_velocity_north_south(quan::time::us const * results) c
 }
 
 quan::velocity::m_per_s 
-wind_sensor_t::solve_wind_velocity_east_west( quan::time::us const * results ) const
+UltrasonicWindSensor::solve_wind_velocity_east_west( quan::time::us const * results ) const
 {
    auto const tF = results[0] - (m_rise_time + m_east_west_bias/2);
    auto const tR = results[1] - (m_rise_time - m_east_west_bias/2);
@@ -100,7 +100,7 @@ wind_sensor_t::solve_wind_velocity_east_west( quan::time::us const * results ) c
 }
 
 quan::velocity::m_per_s 
-wind_sensor_t::get_sound_velocity()
+UltrasonicWindSensor::get_sound_velocity()
 {
    return 344.7_m_per_s;
 }
@@ -117,6 +117,6 @@ quan::angle::deg get_wind_direction(quan::two_d::vect<quan::velocity::m_per_s> c
 
 quan::velocity::m_per_s get_wind_speed(quan::two_d::vect<quan::velocity::m_per_s> const & v)
 {
-   return quan::two_d::magnitude(v);
+   return magnitude(v);
 }
 
