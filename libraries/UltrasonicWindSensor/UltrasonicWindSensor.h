@@ -56,6 +56,7 @@ private:
    quan::velocity::m_per_s solve_wind_velocity_north_south(quan::time::us const *results) const;
    quan::velocity::m_per_s solve_wind_velocity_east_west( quan::time::us const *results) const;
 
+   quan::length::mm const m_transducer_constant;
    quan::time::us m_north_south_bias;
    quan::time::us m_east_west_bias;
    quan::time::us m_rise_time;

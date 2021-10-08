@@ -1,5 +1,6 @@
 
 #include "UltrasonicWindSensor.h"
+#include <quan/out/frequency.hpp>
 #include <quan/atan2.hpp>
 #include "wind_sensor_impl.h"
 
@@ -9,11 +10,21 @@ namespace {
    QUAN_QUANTITY_LITERAL(length,mm)
    QUAN_QUANTITY_LITERAL(velocity,m_per_s)
    QUAN_QUANTITY_LITERAL(angle,deg)
+   QUAN_QUANTITY_LITERAL(frequency, MHz);
+
+   quan::length::mm get_transducer_constant(quan::length::mm const & r, quan::length::mm const & h)
+   {
+      quan::length::mm const d = quan::pow<1,2>(quan::pow<2>(r) + quan::pow<2>(h));
+      quan::angle::rad const theta = quan::atan2(r,h);
+      return d / (2 * cos(theta));
+   }
+
 }
 
 UltrasonicWindSensor::UltrasonicWindSensor(quan::length::mm const & transducer_radius_in,quan::length::mm sensor_height_in)
 : m_transducer_radius{transducer_radius_in},
   m_sensor_height{sensor_height_in},
+  m_transducer_constant{get_transducer_constant(transducer_radius_in,sensor_height_in)},
   m_north_south_bias{0_us},
   m_east_west_bias{0_us},
   m_rise_time{100_us}
@@ -75,7 +86,7 @@ quan::velocity::m_per_s
 UltrasonicWindSensor::solve_wind_velocity(  quan::time::us const & tF, quan::time::us const & tR)const
 {
    if ( (tF > 1_us) && ( tR > 1_us) ){
-      return m_transducer_radius * ( 1 / tF - 1 / tR);
+      return m_transducer_constant * ( 1.0 / tF - 1.0 / tR);
    }else{
       return 0_m_per_s;
    }
@@ -100,6 +111,7 @@ UltrasonicWindSensor::solve_wind_velocity_east_west( quan::time::us const * resu
 }
 
 quan::velocity::m_per_s 
+// TODO calculate as a function of temperature
 UltrasonicWindSensor::get_sound_velocity()
 {
    return 344.7_m_per_s;
