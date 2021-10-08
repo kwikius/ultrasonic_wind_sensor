@@ -18,7 +18,7 @@ N.B To get accurate timing in interrupts, we dont use the standard Arduino.Seria
 but rather  custom polledSerial object of PolledSerial class which doesn't use any interrupts.
 Note that polledSerial will block while writing data, but this is not a problem ,
 since the program is spending most time waiting for the wind sensor to take readings anyway.
-A new reading is retuned around every 1/50th sec.  
+A new reading is returned around every 1/50th sec.  
 
 At 115200 baud we can write a maximum of
 115200/(10*50) ~= 230 bytes of text or data per sensor reading
