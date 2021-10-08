@@ -7,6 +7,7 @@
 #include <quan/uav/cobs/static_packet_parser.hpp>
 #include <quan/velocity.hpp>
 #include <quan/angle.hpp>
+#include <polled_serial.h>
 
  enum class PacketID : uint16_t {
    WindSpeedAndDirection = 1U,
@@ -56,9 +57,9 @@ static_assert ( (sizeof (velocity_and_direction_packet) % 4) == 0,"unexpected un
       uint8_t encoded[quan::uav::cobs::get_encoded_length<sizeof(packet)>()];
       quan::uav::cobs::encode (packet.ar,sizeof(packet),encoded);
 
-      Serial.write('\0'); // frame
-      Serial.write(reinterpret_cast<char*>(encoded),sizeof(encoded));
-      Serial.write('\0'); // frame
+      polledSerial.write('\0'); // frame
+      polledSerial.write(reinterpret_cast<char*>(encoded),sizeof(encoded));
+      polledSerial.write('\0'); // frame
    }
 
    template <typename Packet, typename... ValueTypes>

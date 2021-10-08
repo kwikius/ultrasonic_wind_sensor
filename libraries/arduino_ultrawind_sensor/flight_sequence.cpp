@@ -142,12 +142,14 @@ ISR (TIMER1_CAPT_vect)
    TIMSK1 &= ~(1U << ICIE1 );
    ll_new_capture_value = true;
 
+#if 1
   // show we are doing something|
   // blink at roughly 1 Hz if things are working correctly
    if (++irqcount == 250U){
       complement_builtin_led();
       irqcount = 0U;
    }
+#endif
 }
 
 namespace {

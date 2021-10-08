@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:mcp6561
 LIBS:reversing_sensor_circuit-rescue
 LIBS:power
 LIBS:device

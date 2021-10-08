@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:mcp6561
 LIBS:reversing_sensor_circuit-rescue
 LIBS:power
 LIBS:device
@@ -328,11 +329,7 @@ TXO
 Wire Wire Line
 	4350 2975 4650 2975
 Wire Wire Line
-	4350 2175 4350 2775
-Wire Wire Line
-	4350 2775 4350 2875
-Wire Wire Line
-	4350 2875 4350 2975
+	4350 2175 4350 2975
 Wire Wire Line
 	4650 2775 4350 2775
 Connection ~ 4350 2775
@@ -342,11 +339,7 @@ Connection ~ 4350 2875
 Wire Wire Line
 	4650 4575 4550 4575
 Wire Wire Line
-	4550 4575 4550 4675
-Wire Wire Line
-	4550 4675 4550 4775
-Wire Wire Line
-	4550 4775 4550 4875
+	4550 4575 4550 4875
 Wire Wire Line
 	4650 4675 4550 4675
 Connection ~ 4550 4675
@@ -378,11 +371,7 @@ Wire Wire Line
 Wire Wire Line
 	3500 2150 3500 2050
 Wire Wire Line
-	3500 2450 3500 2525
-Wire Wire Line
-	3500 2525 3500 2575
-Wire Wire Line
-	3500 2575 3500 2675
+	3500 2450 3500 2675
 Wire Wire Line
 	3500 3200 3500 3075
 Wire Wire Line
@@ -392,13 +381,9 @@ Wire Wire Line
 	3500 2525 3225 2525
 Connection ~ 3500 2525
 Wire Wire Line
-	2850 4375 2850 4475
+	2850 4375 2850 4550
 Wire Wire Line
-	2850 4475 2850 4550
-Wire Wire Line
-	2850 3875 2850 3975
-Wire Wire Line
-	2850 3975 2850 4075
+	2850 3875 2850 4075
 Wire Wire Line
 	6750 4875 6825 4875
 Wire Wire Line
@@ -410,9 +395,7 @@ Wire Wire Line
 Wire Wire Line
 	2925 2525 2800 2525
 Wire Wire Line
-	2850 4475 3150 4475
-Wire Wire Line
-	3150 4475 3425 4475
+	2850 4475 3425 4475
 Wire Wire Line
 	3425 4475 3425 4375
 Connection ~ 2850 4475
@@ -420,9 +403,7 @@ Wire Wire Line
 	3150 4350 3150 4475
 Connection ~ 3150 4475
 Wire Wire Line
-	2850 3975 3150 3975
-Wire Wire Line
-	3150 3975 3425 3975
+	2850 3975 3425 3975
 Wire Wire Line
 	3425 3975 3425 4075
 Connection ~ 2850 3975
@@ -432,9 +413,7 @@ Connection ~ 3150 3975
 Wire Wire Line
 	3550 5875 3650 5875
 Wire Wire Line
-	3650 5875 3650 6000
-Wire Wire Line
-	3650 6000 3650 6075
+	3650 5875 3650 6075
 Wire Wire Line
 	3550 5975 3650 5975
 Wire Wire Line
@@ -462,7 +441,7 @@ Wire Wire Line
 	6950 3475 6750 3475
 Wire Wire Line
 	6975 3575 6750 3575
-Text Notes 8500 2525 0    60   ~ 0
+Text Notes 5025 6975 0    60   ~ 0
 comparator electrical characteristics\ninput offset voltage @ 5V \n(conditions 0.4V < Vin <Vcc-0.5V)\n   typical 10 mV, max 40 mV\ninput leakage current           \n   min -50 nA max 50 nA\npropogation delay\n   500 ns
 Wire Wire Line
 	6950 4075 6750 4075
@@ -489,9 +468,7 @@ F 3 "" H 8500 4400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8500 4025 8500 4175
-Wire Wire Line
-	8500 4175 8500 4250
+	8500 4025 8500 4250
 $Comp
 L GND #PWR?
 U 1 1 61588961
@@ -504,9 +481,7 @@ F 3 "" H 8500 4925 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8500 4925 8500 4800
-Wire Wire Line
-	8500 4800 8500 4550
+	8500 4550 8500 4925
 $Comp
 L VCC #PWR?
 U 1 1 61588A47
@@ -525,9 +500,7 @@ Text Notes 8625 4150 0    60   ~ 0
 Wire Wire Line
 	6925 2575 6750 2575
 Wire Wire Line
-	6750 4175 8200 4175
-Wire Wire Line
-	8200 4175 8500 4175
+	6750 4175 8500 4175
 Connection ~ 8500 4175
 Text Label 7450 4175 0    60   ~ 0
 EnvelopeDetect
@@ -550,4 +523,40 @@ Connection ~ 8500 4800
 Wire Wire Line
 	8200 4300 8200 4175
 Connection ~ 8200 4175
+$Comp
+L MCP6561 U?
+U 1 1 615ECD8F
+P 9150 1400
+F 0 "U?" H 9200 1600 60  0001 L CNN
+F 1 "MCP6561" H 9100 1200 60  0001 L CNN
+F 2 "" H 9150 1400 60  0001 C CNN
+F 3 "" H 9150 1400 60  0001 C CNN
+	1    9150 1400
+	1    0    0    -1  
+$EndComp
+Text HLabel 7300 1250 0    60   Input ~ 0
+RxSignal
+Wire Wire Line
+	8450 1250 7300 1250
+Text HLabel 7775 1450 0    60   Input ~ 0
+RxSignalGnd
+Text Label 7775 1650 2    60   ~ 0
+EnvelopeDetect
+$Comp
+L SW_SPDT SW?
+U 1 1 615ED0E9
+P 8100 1550
+F 0 "SW?" H 8100 1720 50  0001 C CNN
+F 1 "SW_SPDT" H 8100 1350 50  0001 C CNN
+F 2 "" H 8100 1550 50  0001 C CNN
+F 3 "" H 8100 1550 50  0001 C CNN
+	1    8100 1550
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	8450 1550 8300 1550
+Wire Wire Line
+	7900 1450 7775 1450
+Wire Wire Line
+	7900 1650 7775 1650
 $EndSCHEMATC
