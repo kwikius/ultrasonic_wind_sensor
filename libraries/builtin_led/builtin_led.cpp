@@ -2,21 +2,21 @@
 #include <Arduino.h>
 #include "builtin_led.h"
 
-/**
- On arduino pro mini builtin led is PB5
-  set pin high for on , low for off
- 
-**/
-
+// for Pro Mini use direct inline port read write
 #if !defined ARDUINO_AVR_PRO
 namespace {
 
   bool builtinLedState = false;
 
   static uint8_t const builtin_led = LED_BUILTIN;
-
+#if defined ESP8266
+   // Generic ESP-01 built in LED is on GPIO2 on my board
+  static uint8_t const builtin_led_on = LOW;
+  static uint8_t const builtin_led_off = HIGH;
+#else
   static uint8_t const builtin_led_on = HIGH;
   static uint8_t const builtin_led_off = LOW;
+#endif
 
 }
 

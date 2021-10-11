@@ -9,14 +9,14 @@ The Ultrasonic wind sensor described here can be built for around £20($20) and 
 
 The main components of the project are an Ebay car reversing kit, available for around £9(10$US) and an arduino Pro Mini or clone for around 5$US.
 
-More details about building the electronics and mechanical hardware can be found at Hackaday.io
-
-https://hackaday.io/project/181677-wind-sensor-using-car-reversing-kit
-
 Click the below image to watch a video of the project on YouTube:
 
-[![Youtube - Ultrasonic Wind Speed and Direction Sensor from a car reversing kit](http://img.youtube.com/vi/_kloM0Tk8lo/2.jpg)](https://www.youtube.com/watch?v=_kloM0Tk8lo 
+[![Youtube - Ultrasonic Wind Speed and Direction Sensor from a car reversing kit](http://img.youtube.com/vi/_kloM0Tk8lo/2.jpg)](https://www.youtube.com/watch?v=_kloM0Tk8lo&list=PL-N-nQ0dVeh7bO8eM10oHQ2tNhluuLc5f 
 "Youtube - Ultrasonic Wind Speed and Direction Sensor from a car reversing kit")
+
+Full details about building the electronics and mechanical hardware can be found at Hackaday.io
+
+https://hackaday.io/project/181677-wind-sensor-using-car-reversing-kit
 
 The project is designed to run in the Arduino IDE.
 

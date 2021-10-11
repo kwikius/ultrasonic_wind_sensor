@@ -14,9 +14,9 @@ namespace {
 
    quan::length::mm get_transducer_constant(quan::length::mm const & r, quan::length::mm const & h)
    {
-      quan::length::mm const d = quan::pow<1,2>(quan::pow<2>(r) + quan::pow<2>(h));
-      quan::angle::rad const theta = quan::atan2(r,h);
-      return d / (2 * cos(theta));
+      auto const dsqd = quan::pow<2>(r) + quan::pow<2>(h);
+     // quan::angle::rad const theta = quan::atan2(h,r);
+      return dsqd / r;
    }
 
 }

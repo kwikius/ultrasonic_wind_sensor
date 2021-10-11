@@ -1,5 +1,4 @@
 
-
 #include <UltrasonicWindSensor.h>
 #include <builtin_led.h>
 #include <windsensor_packet.h>
@@ -9,6 +8,7 @@ namespace {
 
   /// Allows use of user defined literals defining lengths in mm
   QUAN_QUANTITY_LITERAL( length,mm)
+  QUAN_QUANTITY_LITERAL( time,s)
 
   //instantiate the wind sensor class
   UltrasonicWindSensor windSensor{150_mm,250_mm};
@@ -30,19 +30,35 @@ the minimum baud rate = 12*10 * 50 ~= 6000 baud so say min of 9600 baud
 **/
 void setup()
 {
+   
    polledSerial.begin(115200);
  
    builtin_led_setup();
-
-   polledSerial.println("ultrasonic wind sensor initialising...");
 
    windSensor.init();
 
    polledSerial.println("wind sensor initialised");
 
 }
+namespace{
+// send packet using zapp4 protocol
+   template <typename Packet>
+   inline void send_packet( Packet const & packet)
+   {
+      uint8_t encoded[quan::uav::cobs::get_encoded_length<sizeof(packet)>()];
+      quan::uav::cobs::encode (packet.ar,sizeof(packet),encoded);
 
-namespace {
+      polledSerial.write('\0'); // frame
+      polledSerial.write(reinterpret_cast<char*>(encoded),sizeof(encoded));
+      polledSerial.write('\0'); // frame
+   }
+
+   template <typename Packet, typename... ValueTypes>
+   inline void send_packet( ValueTypes const &... values )
+   {
+      Packet packet{values...};
+      send_packet(packet);
+   }
 
    // send data as user readable over serial port
    void readWindSensor()

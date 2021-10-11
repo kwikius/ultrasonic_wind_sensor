@@ -52,7 +52,7 @@ namespace {
 
    void WifiConnect()
    {
- 
+
      WiFi.hostname(wifiHostName);
 
      setup_network_params();
@@ -83,8 +83,13 @@ namespace {
     
      server.begin();
      webSocket.begin();
+
+
      webSocket.onEvent(webSocketEvent);
+
    }
+
+    static const uint8_t atmega328Reset = 0;
 }
 
 void setup() 
@@ -96,7 +101,12 @@ void setup()
    }
    builtin_led_setup();
 
+   pinMode(atmega328Reset, OUTPUT);
+   digitalWrite(atmega328Reset,LOW);
+
    WifiConnect();
+
+   digitalWrite(atmega328Reset,HIGH);
 }
 
 namespace{

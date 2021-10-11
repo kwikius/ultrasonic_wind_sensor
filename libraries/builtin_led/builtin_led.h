@@ -5,6 +5,11 @@
 
 #if defined ARDUINO_AVR_PRO
 
+/**
+ On arduino pro mini builtin led is PB5
+  set pin high for on , low for off
+**/
+
 inline void builtin_led_setup()
 {
      PORTB &= ~(0b1 << 5U);
