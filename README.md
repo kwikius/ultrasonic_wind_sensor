@@ -43,6 +43,23 @@ Now select 'Sketch > Verify/Compile' to compile.
 
 The code can be uploaded by attaching a serial cable to the Arduino Pro Mini and clicking Sketch > Upload.
 
+By default the sketch provides text output via the serial port.
+
+------------------------------
+
+TODO Proper installation instructions for [web server](https://github.com/kwikius/ultrasonic_wind_sensor/blob/master/web_server/web_server.ino)
+
+Optional :
+For [web server](https://github.com/kwikius/ultrasonic_wind_sensor/blob/master/web_server/web_server.ino) ,
+uncomment //#define WIND_SENSOR_WEB_SERVER_OUTPUT in ArduUltrasonicWindSensor.ino
+
+You need the following libraries in libraries subdirectory 
+* https://github.com/me-no-dev/ESPAsyncTCP
+* https://github.com/me-no-dev/ESPAsyncWebServer
+* https://github.com/Links2004/arduinoWebSockets
+
+
+
 
 
 
