@@ -1,8 +1,16 @@
 
 #include <UltrasonicWindSensor.h>
 #include <builtin_led.h>
-#include <windsensor_packet.h>
 #include <polled_serial.h>
+
+//###########################################
+// define for output to webserver
+//#define WIND_SENSOR_WEB_SERVER_OUTPUT
+// else output is user readable text
+//###########################################
+#if defined (WIND_SENSOR_WEB_SERVER_OUTPUT)
+#include <windsensor_packet.h>
+#endif
 
 namespace {
 
@@ -41,6 +49,8 @@ void setup()
 
 }
 namespace{
+
+#if defined (WIND_SENSOR_WEB_SERVER_OUTPUT)
 // send packet using zapp4 protocol
    template <typename Packet>
    inline void send_packet( Packet const & packet)
@@ -60,6 +70,16 @@ namespace{
       send_packet(packet);
    }
 
+   // send data as a binary packet
+   void sendWindSensor() 
+   {
+      auto const speed = windSensor.getWindSpeed();
+      auto const direction = windSensor.getWindDirection();
+
+      send_packet<velocity_and_direction_packet>(speed,direction);
+   }
+
+#else
    // send data as user readable over serial port
    void readWindSensor()
    {
@@ -75,22 +95,18 @@ namespace{
        polledSerial.println(" deg");
    }
 
-   // send data as a binary packet
-   void sendWindSensor() 
-   {
-      auto const speed = windSensor.getWindSpeed();
-      auto const direction = windSensor.getWindDirection();
+#endif
 
-      send_packet<velocity_and_direction_packet>(speed,direction);
-   }
 }
 
 void loop()
 {
     windSensor.update();
-    // uncomment for simple text output to serial port
-    //readWindSensor();
-    // uncomment framed packet protocol used by web server
-    sendWindSensor();
+ 
+#if (defined (WIND_SENSOR_WEB_SERVER_OUTPUT))     
+   sendWindSensor();  // web server packet protocol output 
+#else
+   readWindSensor();  // user readable serial text output
+#endif
 }
 
