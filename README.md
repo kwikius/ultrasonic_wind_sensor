@@ -73,7 +73,7 @@ Start the Arduino IDE. Click on 'File > Preferences' and modify the sketchbook l
 Close Arduino and reopen.
 
 When Arduino reopens , click on 'File > Open' , navigate to the ultrasonic_wind_sensor/web_server subdirectory 
-and select "wb_server.ino".
+and select "web_server.ino".
 
 Next click on 'Tools > Processor' and select "Generic ESP8266 Module"
 
