@@ -1,4 +1,4 @@
-update=Thu 07 Oct 2021 11:31:56 BST
+update=Sun 24 Oct 2021 17:20:29 BST
 version=1
 last_client=kicad
 [pcbnew]
@@ -25,16 +25,6 @@ version=1
 NetIExt=net
 [general]
 version=1
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=../../doc/
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=60
 [eeschema]
 version=1
 LibDir=
@@ -74,3 +64,14 @@ LibName32=atmel
 LibName33=contrib
 LibName34=valves
 LibName35=/home/andy/cpp/projects/aerflite_preview/kicad/lib/atmega328p
+LibName36=/home/andy/cpp/projects/aerflite_preview/kicad/lib/esp-01
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=../../doc/
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60

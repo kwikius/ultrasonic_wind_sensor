@@ -58,7 +58,9 @@ namespace {
      setup_network_params();
 
      WiFi.begin(get_wifi_network_ssid(), get_wifi_password());
-     debugSerial.print("Connecting ...");
+     debugSerial.print("Connecting to ");
+     debugSerial.print(get_wifi_network_ssid());
+     debugSerial.print("...");
      while (WiFi.status() != WL_CONNECTED) {
        delay(250);
        complement_builtin_led();

@@ -84,9 +84,7 @@ Wire Wire Line
 Wire Wire Line
 	3500 3700 3500 3625
 Wire Wire Line
-	3075 3050 3150 3050
-Wire Wire Line
-	3150 3050 3200 3050
+	3075 3050 3200 3050
 $Comp
 L R R16
 U 1 1 607437E7
@@ -110,11 +108,7 @@ F 3 "" H 3500 2400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3500 2550 3500 2625
-Wire Wire Line
-	3500 2625 3500 2700
-Wire Wire Line
-	3500 2700 3500 2850
+	3500 2550 3500 2850
 Wire Wire Line
 	3150 2975 3150 3050
 Connection ~ 3150 3050
@@ -203,17 +197,9 @@ F 3 "" H 6375 4100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6375 4000 6375 4025
+	6375 4000 6375 4100
 Wire Wire Line
-	6375 4025 6375 4075
-Wire Wire Line
-	6375 4075 6375 4100
-Wire Wire Line
-	6375 3425 6375 3500
-Wire Wire Line
-	6375 3500 6375 3575
-Wire Wire Line
-	6375 3575 6375 3700
+	6375 3425 6375 3700
 $Comp
 L +5V #PWR?
 U 1 1 60743831
@@ -300,15 +286,9 @@ F 3 "" H 4750 2700 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	4900 2700 5000 2700
+	4900 2700 5175 2700
 Wire Wire Line
-	5000 2700 5175 2700
-Wire Wire Line
-	4250 2700 4425 2700
-Wire Wire Line
-	4425 2700 4525 2700
-Wire Wire Line
-	4525 2700 4600 2700
+	4250 2700 4600 2700
 Connection ~ 4425 2700
 Wire Wire Line
 	5000 2700 5000 2125
@@ -316,13 +296,9 @@ Wire Wire Line
 	5000 2125 5450 2125
 Connection ~ 5000 2700
 Wire Wire Line
-	5775 2600 5850 2600
+	5775 2600 6025 2600
 Wire Wire Line
-	5850 2600 6025 2600
-Wire Wire Line
-	5850 1925 5850 2125
-Wire Wire Line
-	5850 2125 5850 2600
+	5850 1925 5850 2600
 Wire Wire Line
 	5850 2125 5750 2125
 Wire Wire Line
@@ -425,15 +401,9 @@ F 3 "" H 7125 2600 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 Wire Wire Line
-	7275 2600 7375 2600
+	7275 2600 7550 2600
 Wire Wire Line
-	7375 2600 7550 2600
-Wire Wire Line
-	6700 2600 6800 2600
-Wire Wire Line
-	6800 2600 6900 2600
-Wire Wire Line
-	6900 2600 6975 2600
+	6700 2600 6975 2600
 Connection ~ 6800 2600
 Wire Wire Line
 	7375 2600 7375 2025
@@ -441,15 +411,9 @@ Wire Wire Line
 	7375 2025 7825 2025
 Connection ~ 7375 2600
 Wire Wire Line
-	8150 2500 8225 2500
+	8150 2500 8300 2500
 Wire Wire Line
-	8225 2500 8275 2500
-Wire Wire Line
-	8275 2500 8300 2500
-Wire Wire Line
-	8225 1825 8225 2025
-Wire Wire Line
-	8225 2025 8225 2500
+	8225 1825 8225 2500
 Wire Wire Line
 	8225 2025 8125 2025
 Wire Wire Line
@@ -464,11 +428,9 @@ Connection ~ 5850 2600
 Wire Wire Line
 	7550 2400 7475 2400
 Wire Wire Line
-	7475 2400 7475 3575
+	7475 3575 7475 2400
 Wire Wire Line
-	7475 3575 6650 3575
-Wire Wire Line
-	6650 3575 6375 3575
+	6375 3575 7475 3575
 Connection ~ 6375 3575
 $Comp
 L C C20
@@ -529,24 +491,16 @@ Connection ~ 8225 2500
 Wire Wire Line
 	8925 2975 9025 2975
 Wire Wire Line
-	8925 2800 8925 2975
+	8925 2800 8925 3200
 Wire Wire Line
-	8925 2975 8925 3200
-Wire Wire Line
-	9325 2975 9400 2975
-Wire Wire Line
-	9400 2975 9450 2975
+	9325 2975 9450 2975
 Wire Wire Line
 	9400 3150 9400 2975
 Connection ~ 9400 2975
 Wire Wire Line
 	8925 3500 8925 3675
 Wire Wire Line
-	8925 3675 9225 3675
-Wire Wire Line
-	9225 3675 9400 3675
-Wire Wire Line
-	9400 3675 9750 3675
+	8925 3675 9750 3675
 Wire Wire Line
 	9750 3675 9750 3175
 Wire Wire Line
@@ -580,9 +534,7 @@ $EndComp
 Wire Wire Line
 	9750 2275 9750 2350
 Wire Wire Line
-	9750 2650 9750 2725
-Wire Wire Line
-	9750 2725 9750 2775
+	9750 2650 9750 2775
 Text HLabel 9875 2725 2    60   Output ~ 0
 EnvelopeDetect
 Wire Wire Line
@@ -620,13 +572,9 @@ Wire Wire Line
 Wire Wire Line
 	1775 2600 1775 2525
 Wire Wire Line
-	1775 2525 1925 2525
+	1775 2525 2025 2525
 Wire Wire Line
-	1925 2525 2025 2525
-Wire Wire Line
-	2025 2525 2025 3050
-Wire Wire Line
-	2025 3050 2025 3325
+	2025 2525 2025 3325
 Wire Wire Line
 	2025 3325 1775 3325
 Wire Wire Line
@@ -646,9 +594,7 @@ Wire Wire Line
 Wire Wire Line
 	5100 2500 5100 3500
 Wire Wire Line
-	5100 3500 5875 3500
-Wire Wire Line
-	5875 3500 6375 3500
+	5100 3500 6375 3500
 Connection ~ 6375 3500
 $Comp
 L Q_NPN_BEC Q8
@@ -724,9 +670,7 @@ Wire Wire Line
 	5875 3675 5875 3500
 Connection ~ 5875 3500
 Wire Wire Line
-	5375 4075 5875 4075
-Wire Wire Line
-	5875 4075 6375 4075
+	5375 4075 6375 4075
 Wire Wire Line
 	5875 4075 5875 3975
 Connection ~ 6375 4075

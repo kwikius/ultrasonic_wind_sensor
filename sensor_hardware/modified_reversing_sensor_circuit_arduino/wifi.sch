@@ -1,0 +1,317 @@
+EESchema Schematic File Version 2
+LIBS:mcp6561
+LIBS:reversing_sensor_circuit-rescue
+LIBS:power
+LIBS:device
+LIBS:switches
+LIBS:relays
+LIBS:motors
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:atmega328p
+LIBS:esp-01
+LIBS:reversing_sensor_circuit-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 5 5
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L ESP-01 U6
+U 1 1 61753452
+P 5100 4450
+F 0 "U6" H 5050 4350 60  0000 C CNN
+F 1 "ESP-01" H 5100 4550 60  0000 C CNN
+F 2 "" H 5100 4250 60  0001 C CNN
+F 3 "" H 5100 4250 60  0001 C CNN
+	1    5100 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR43
+U 1 1 617534AE
+P 5925 5150
+F 0 "#PWR43" H 5925 4900 50  0001 C CNN
+F 1 "GND" H 5925 5000 50  0000 C CNN
+F 2 "" H 5925 5150 50  0001 C CNN
+F 3 "" H 5925 5150 50  0001 C CNN
+	1    5925 5150
+	1    0    0    -1  
+$EndComp
+$Comp
+L LM117_TO3 U5
+U 1 1 617534C5
+P 4950 2000
+F 0 "U5" H 4800 2125 50  0000 C CNN
+F 1 "LM117_TO3" H 4950 2125 50  0000 L CNN
+F 2 "TO_SOT_Packages_THT:TO-3" H 4950 2200 50  0001 C CIN
+F 3 "" H 4950 2000 50  0001 C CNN
+	1    4950 2000
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR41
+U 1 1 61753574
+P 5025 2700
+F 0 "#PWR41" H 5025 2450 50  0001 C CNN
+F 1 "GND" H 5025 2550 50  0000 C CNN
+F 2 "" H 5025 2700 50  0001 C CNN
+F 3 "" H 5025 2700 50  0001 C CNN
+	1    5025 2700
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C17
+U 1 1 617535FF
+P 4325 2225
+F 0 "C17" H 4350 2325 50  0000 L CNN
+F 1 "C" H 4350 2125 50  0000 L CNN
+F 2 "" H 4363 2075 50  0001 C CNN
+F 3 "" H 4325 2225 50  0001 C CNN
+	1    4325 2225
+	1    0    0    -1  
+$EndComp
+$Comp
+L CP C18
+U 1 1 61753646
+P 5650 2300
+F 0 "C18" H 5675 2400 50  0000 L CNN
+F 1 "CP" H 5675 2200 50  0000 L CNN
+F 2 "" H 5688 2150 50  0001 C CNN
+F 3 "" H 5650 2300 50  0001 C CNN
+	1    5650 2300
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3.3V #PWR42
+U 1 1 617538FC
+P 5650 1875
+F 0 "#PWR42" H 5650 1725 50  0001 C CNN
+F 1 "+3.3V" H 5650 2015 50  0000 C CNN
+F 2 "" H 5650 1875 50  0001 C CNN
+F 3 "" H 5650 1875 50  0001 C CNN
+	1    5650 1875
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R31
+U 1 1 61753E00
+P 4050 3925
+F 0 "R31" V 4130 3925 50  0000 C CNN
+F 1 "10K" V 4050 3925 50  0000 C CNN
+F 2 "" V 3980 3925 50  0001 C CNN
+F 3 "" H 4050 3925 50  0001 C CNN
+	1    4050 3925
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_Push SW2
+U 1 1 61753E4F
+P 4050 4775
+F 0 "SW2" H 4100 4875 50  0000 L CNN
+F 1 "SW_Push" H 4050 4715 50  0000 C CNN
+F 2 "" H 4050 4975 50  0001 C CNN
+F 3 "" H 4050 4975 50  0001 C CNN
+	1    4050 4775
+	0    1    1    0   
+$EndComp
+$Comp
+L +3.3V #PWR40
+U 1 1 61754027
+P 4550 3300
+F 0 "#PWR40" H 4550 3150 50  0001 C CNN
+F 1 "+3.3V" H 4550 3440 50  0000 C CNN
+F 2 "" H 4550 3300 50  0001 C CNN
+F 3 "" H 4550 3300 50  0001 C CNN
+	1    4550 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R32
+U 1 1 61754641
+P 6000 3775
+F 0 "R32" V 6080 3775 50  0000 C CNN
+F 1 "10K" V 6000 3775 50  0000 C CNN
+F 2 "" V 5930 3775 50  0001 C CNN
+F 3 "" H 6000 3775 50  0001 C CNN
+	1    6000 3775
+	1    0    0    -1  
+$EndComp
+Text HLabel 6075 4600 2    60   Input ~ 0
+RXI
+Text HLabel 6225 3100 0    60   Output ~ 0
+ArduinoRST
+$Comp
+L +12V #PWR39
+U 1 1 61759747
+P 4325 1750
+F 0 "#PWR39" H 4325 1600 50  0001 C CNN
+F 1 "+12V" H 4325 1890 50  0000 C CNN
+F 2 "" H 4325 1750 50  0001 C CNN
+F 3 "" H 4325 1750 50  0001 C CNN
+	1    4325 1750
+	1    0    0    -1  
+$EndComp
+NoConn ~ 5850 4400
+$Comp
+L Q_NMOS_SDG Q7
+U 1 1 61757D94
+P 6325 3400
+F 0 "Q7" H 6525 3450 50  0000 L CNN
+F 1 "2SK1336" H 6525 3350 50  0000 L CNN
+F 2 "" H 6525 3500 50  0001 C CNN
+F 3 "" H 6325 3400 50  0001 C CNN
+	1    6325 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR38
+U 1 1 6175A761
+P 3675 2400
+F 0 "#PWR38" H 3675 2250 50  0001 C CNN
+F 1 "+5V" H 3675 2540 50  0000 C CNN
+F 2 "" H 3675 2400 50  0001 C CNN
+F 3 "" H 3675 2400 50  0001 C CNN
+	1    3675 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Q_NMOS_SDG Q6
+U 1 1 6175A80C
+P 3775 3400
+F 0 "Q6" H 3975 3450 50  0000 L CNN
+F 1 "2SK1336" H 3975 3350 50  0000 L CNN
+F 2 "" H 3975 3500 50  0001 C CNN
+F 3 "" H 3775 3400 50  0001 C CNN
+	1    3775 3400
+	-1   0    0    -1  
+$EndComp
+$Comp
+L R R30
+U 1 1 6175A92E
+P 3675 2625
+F 0 "R30" V 3755 2625 50  0000 C CNN
+F 1 "4K7" V 3675 2625 50  0000 C CNN
+F 2 "" V 3605 2625 50  0001 C CNN
+F 3 "" H 3675 2625 50  0001 C CNN
+	1    3675 2625
+	1    0    0    -1  
+$EndComp
+Text HLabel 3300 2925 0    60   Output ~ 0
+ArduinoTXO
+Wire Wire Line
+	4325 2375 4325 2600
+Wire Wire Line
+	4325 2600 5650 2600
+Wire Wire Line
+	5650 2600 5650 2450
+Wire Wire Line
+	5025 2700 5025 2600
+Connection ~ 5025 2600
+Wire Wire Line
+	4950 2300 4950 2600
+Connection ~ 4950 2600
+Wire Wire Line
+	4650 2000 4325 2000
+Wire Wire Line
+	4325 1750 4325 2075
+Wire Wire Line
+	5650 1875 5650 2150
+Wire Wire Line
+	5250 2000 5650 2000
+Connection ~ 5650 2000
+Wire Wire Line
+	5850 4300 5925 4300
+Wire Wire Line
+	5925 4300 5925 5150
+Wire Wire Line
+	4050 4075 4050 4575
+Wire Wire Line
+	4300 4500 4050 4500
+Wire Wire Line
+	4250 3400 4250 4600
+Wire Wire Line
+	4250 4600 4300 4600
+Wire Wire Line
+	6000 3925 6000 4500
+Wire Wire Line
+	3975 3400 6125 3400
+Wire Wire Line
+	6000 3400 6000 3625
+Wire Wire Line
+	4300 4400 4250 4400
+Wire Wire Line
+	6425 3100 6425 3200
+Wire Wire Line
+	6425 3100 6225 3100
+Connection ~ 4325 2000
+Wire Wire Line
+	6000 4500 5850 4500
+Wire Wire Line
+	6000 4000 6425 4000
+Wire Wire Line
+	6425 4000 6425 3600
+Connection ~ 6000 4000
+Connection ~ 6000 3400
+Wire Wire Line
+	5850 4600 6075 4600
+Wire Wire Line
+	4300 4300 3675 4300
+Wire Wire Line
+	3675 4300 3675 3600
+Wire Wire Line
+	3675 2775 3675 3200
+Wire Wire Line
+	3675 2475 3675 2400
+Wire Wire Line
+	3300 2925 3675 2925
+Connection ~ 3675 2925
+Wire Wire Line
+	4050 4975 4050 5100
+Wire Wire Line
+	4050 5100 5925 5100
+Connection ~ 5925 5100
+Wire Wire Line
+	4550 3300 4550 3400
+Connection ~ 4550 3400
+Connection ~ 4250 3400
+Connection ~ 4250 4400
+Wire Wire Line
+	4050 3775 4050 3400
+Connection ~ 4050 3400
+Connection ~ 4050 4500
+$EndSCHEMATC
